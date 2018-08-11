@@ -20,16 +20,15 @@ class Machine {
       extractOptions: {},
       rules: (extract) => {},
       purity: (entity) => {},
-      handleImages: (entity) => {},
-      handleEntity: (entity) => {},
+      deriveImageMap: (entity) => {},
+      deriveLoadPath: (entity) => {},
     }
     Object.assign(this.options, options);
     // bind this.
     this.extract = this.extract.bind(this);
-    this.explore = this.explore.bind(this);
+    this.connect = this.connect.bind(this);
     this.run = this.run.bind(this);
     this.handleImages = this.handleImages.bind(this);
-    this.dirty = this.dirty.bind(this);
     this.loadHtml = this.loadHtml.bind(this);
   }
 
@@ -53,38 +52,45 @@ class Machine {
         for (var key of Object.keys(options)) {
           result[key] = find(options[key]);
         }
+        result.mixAll = () => {
+          let s = '';
+          for (var key of Object.keys(options)) {
+            s += result[key].outerHTML;
+          }
+          return s;
+        }
         resolve(result);
       });
     });
   }
 
-
-  dirty(url, options) {
-    this.extract(url, options).then((entity) => {
-      const dateText = entity.date.textContent.slice(0, 16);
-      entity.date.textContent = dateText;
-      const date = new Date(dateText);
-      const author = entity.url.slice(27, 43);
-      const locationOfImages = path.resolve(__dirname, `images/blog/${author}/${format(date, 'yyyy/MM/dd')}`);
-      const locationOfHtmls = path.resolve(__dirname, `views/blog/${author}/${format(date, 'yyyy/MM/dd')}.html`)
-      this.handleImages(entity.content, locationOfImages)
-        .then(() => console.log('images loaded.'))
-        .then(() => {
-          const nodes = entity.title.outerHTML + entity.author.outerHTML + entity.content.outerHTML + entity.date.outerHTML;
-          this.loadHtml(nodes, locationOfHtmls);
-        }).then(() => console.log('html loaded.'));
-    });
+  /**
+   * Main process.
+   * @param {*} url 
+   */
+  connect(url) {
+    this.extract(url, this.options.extractOptions).then((entity) => {
+      entity = this.options.purity(entity);
+      this.handleImages(entity).then(() => {
+        console.log('images loaded.');
+      }).then(() => {
+        this.loadHtml(entity);
+      }).then(() => {
+        console.log('html loaded.');
+      });
+    })
   }
 
   /**
    * Write the target nodes to html.
-   * @param {*} nodes 
-   * @param {*} location 
+   * @param {*} entity 
    */
-  loadHtml(nodes, location) {
-    if(!fs.existsSync(path.dirname(location)))
-      mkdirs(path.dirname(location));
-    fs.writeFile(location, nodes, 'utf-8', (error) => {
+  loadHtml(entity) {
+    const savepath = this.options.deriveLoadPath(entity);
+    const dir = path.dirname(savepath);
+    if(!fs.existsSync(dir))
+      mkdirs(dir);
+    fs.writeFile(savepath, entity.mixAll(), 'utf-8', (error) => {
       if (error) {
         console.log(error);
       }
@@ -94,10 +100,9 @@ class Machine {
   /**
    * Download image refered in the html to specified location,
    * change the url to local one. 
-   * @param {*} html 
-   * @param {*} location 
+   * @param {*} entity 
    */
-  handleImages(html, location) {
+  handleImages(entity) {
     // loadImages
     const loadImages = (url) => new Promise((resolve, reject) => {
       http.get(new URL(url), (res) => {
@@ -115,42 +120,34 @@ class Machine {
     });
 
     // handleImages
-    const generateName = () => Math.random().toString(36).slice(2, 10).toUpperCase() + '.jpg';
-    const imgs = html.querySelectorAll('img');
+    const map = this.options.deriveImageMap(entity);
     var sequence = Promise.resolve();
-    for (let img of imgs) {
+    const images = entity.content.querySelectorAll('img');
+    [].map.call(images, (image) => {
+      const [url, savepath, src] = map.get(image.src);
       sequence = sequence.then(() => {
-        const src = img.src;
-        // DIRTY-----
-        const newsrc =  + src.slice(31, src.length);
-        // END--
-        const name = generateName();
-        if(!fs.existsSync(location))
-          mkdirs(location);
-        loadImages(newsrc).then((result) => {
-          fs.writeFile(`${location}/${name}`, result, 'binary', (error) => {
+        const dir = path.dirname(savepath);
+        if(!fs.existsSync(dir))
+          mkdirs(dir);
+        loadImages(url).then((result) => {
+          fs.writeFile(savepath, result, 'binary', (error) => {
             if (error) {
               console.log(error);
             }
           });
         });
-      })
-    }
-    return sequence.then(() => html);
+      });
+      removeAllAttributes(image).src = src;
+      return image;
+    });
+    
+    return sequence.then(() => {console.log(entity.content.outerHTML)});
   }
 
 }
 
 
-new Machine().dirty(,{
-  title: '.entrytitle',
-  author: '.author',
-  content: '.entrybody',
-  date: '.entrybottom'
-});
-
-
-new Machine({
+const m = new Machine({
   extractOptions: {
     title: '.entrytitle',
     author: '.author',
@@ -163,26 +160,34 @@ new Machine({
     entity.date.textContent = dateText;
     return entity;
   },
-  handleImages: (entity) => {
-    const hostname = localhost;
+  deriveImageMap: (entity) => {
+    const hostname = '127.0.0.1:3000';
     const map = new Map();
     const images = entity.content.querySelectorAll('img');
     const date = new Date(entity.date.textContent);
-    const name = entity.url.slice(27, 43);
-    const generateRandomStr = () => Math.random().toString(36).slice(2, 10).toUpperCase();
+    const name = entity.url.slice(27, 42);
+    const generateRandomStr = () => Math.random().toString(36).slice(2, 10);
     for (let image of images) {
-      const savepath = `images/blog/${name}/${format(date, 'yyyy/MM/dd')}/${generateRandomStr}.jpg`;
-      map.set(image.src, [
+      const savepath = `images/blog/${name}/${format(date, 'yyyy/MM/dd')}/${generateRandomStr()}.jpg`;
+      const src = image.src;
+      map.set(src, [
+         + src.slice(31, src.length),
         path.resolve(__dirname, savepath),
         `${hostname}/${savepath}`
       ]);
     }
     return map;
   },
-  handleEntity: (entity) => {
-
+  deriveLoadPath: (entity) => {
+    const id = /\d+(?=\.php)/.exec(entity.title.children[0].href)[0];
+    const date = new Date(entity.date.textContent);
+    const name = entity.url.slice(27, 43);
+    const savepath = `views/blog/${name}/${format(date, 'yyyy/MM/dd')}${id}.html`;
+    return path.resolve(__dirname, savepath);
   }
 });
+
+m.connect();
 
 // ------------------------- UTILS
 
@@ -233,6 +238,17 @@ function mkdirs(dirpath) {
   if (!fs.existsSync(path.dirname(dirpath)))
     mkdirs(path.dirname(dirpath));
   fs.mkdirSync(dirpath);
+}
+
+/**
+ * Remove all attributes of an element.
+ * @param {*} element 
+ */
+function removeAllAttributes(element) {
+  element.getAttributeNames().forEach((attr) => {
+    element.removeAttribute(attr);
+  });
+  return element;
 }
 
 
