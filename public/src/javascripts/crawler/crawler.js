@@ -1,27 +1,43 @@
-/* /public/src/javascripts/utils/extract.js */
+/* /public/src/crawler/crawler.js */
 const http = require('http');
 const { URL } = require('url');
 const { JSDOM } = require('jsdom');
 const path = require('path');
 const fs = require('fs');
+const log4js = require('log4js');
+
+// Log configuration.
+
+log4js.configure({
+  appenders: {
+    crawler: { type: 'file', filename: path.resolve(__dirname, 'crawler.log') }
+  },
+  categories: {
+    default: { appenders: ['extract'], level: 'info' }
+  }
+});
+
+const logger = log4js.getLogger('crawler');
 
 /**
  * 1. Get raw html.
- * 2. Find the nodes of title, author, content and date.
- * 3. Download the pictures and replace the remote picture resource urls to local ones.
- * 4. Construct the Blog object.
+ * 2. Find the target elements and construct an object(entity) from them.
+ * 3. Download remote source (e.g. images) and replace the remote url to local one.
+ * 4. Export the object to html file.
  */
 
 
 
 class Machine {
-  constructor(options) {
+  constructor(options, loggers) {
     this.options = {
       extractOptions: {},
+      entry: '',
       rules: (extract) => {},
       purity: (entity) => {},
       deriveImageMap: (entity) => {},
       deriveLoadPath: (entity) => {},
+      log: (level, msg) => {},
     }
     Object.assign(this.options, options);
     // bind this.
@@ -35,10 +51,17 @@ class Machine {
   /**
    * run the machine.
    */
-  run() {}
+  run() {
+    const { log, rules, entry } = this.options;
+    log('info', 'MISSION START');
+    log('info', `ENTRY ${entry}`);
+    Promise.resolve(rules(entry)(this.connect)).then(
+      log('info', 'MISSION FINISHED')
+    );
+  }
 
   /**
-   * Extract target nodes.
+   * Extract target elements.
    * @param {*} url 
    * @param {*} options 
    */
@@ -49,15 +72,15 @@ class Machine {
         const find = (s) => doc.querySelector(s);
         const result = Object.create(null);
         result['url'] = url;
-        for (var key of Object.keys(options)) {
+        for (let key of Object.keys(options)) {
           result[key] = find(options[key]);
         }
         result.mixAll = () => {
-          let s = '';
-          for (var key of Object.keys(options)) {
-            s += result[key].outerHTML;
+          let all = '';
+          for (let key of Object.keys(options)) {
+            all += result[key].outerHTML;
           }
-          return s;
+          return all;
         }
         resolve(result);
       });
@@ -69,31 +92,32 @@ class Machine {
    * @param {*} url 
    */
   connect(url) {
-    this.extract(url, this.options.extractOptions).then((entity) => {
-      entity = this.options.purity(entity);
+    log('info', `CURRENT TARGET ${url}`);
+    const { log, extractOptions, purity } = this.options;
+    this.extract(url, extractOptions).then((entity) => {
+      entity = purity(entity);
       this.handleImages(entity).then(() => {
-        console.log('images loaded.');
+        log('info', 'IMAGES DOWNLOADED');
       }).then(() => {
         this.loadHtml(entity);
       }).then(() => {
-        console.log('html loaded.');
+        log('info', 'HTML DOWNLOADED');
+        log('info', 'TARGET FINISHED');
       });
     })
   }
 
   /**
-   * Write the target nodes to html.
+   * Write the target elements to html.
    * @param {*} entity 
    */
   loadHtml(entity) {
-    const savepath = this.options.deriveLoadPath(entity);
+    const { log, deriveLoadPath } = this.options;
+    const savepath = deriveLoadPath(entity);
     const dir = path.dirname(savepath);
-    if(!fs.existsSync(dir))
-      mkdirs(dir);
+    if (!fs.existsSync(dir)) mkdirs(dir);
     fs.writeFile(savepath, entity.mixAll(), 'utf-8', (error) => {
-      if (error) {
-        console.log(error);
-      }
+      if (error) log('error',  `WRITEFILE ${url}`);
     });
   }
 
@@ -103,10 +127,14 @@ class Machine {
    * @param {*} entity 
    */
   handleImages(entity) {
+    
+    const { log, deriveImageMap } = this.options;
+    
     // loadImages
     const loadImages = (url) => new Promise((resolve, reject) => {
       http.get(new URL(url), (res) => {
-        var source = '';
+        let source = '';
+        if (res.statusCode !== 200) { log('error', `LOADIMAGES ${url}`) }
         res.setEncoding('binary');
         res.on('data', (chunk) => {
           source += chunk;
@@ -114,21 +142,18 @@ class Machine {
         res.on('end', () => {
           resolve(source);
         })
-      }).on('error', (error) => {
-        console.log(error);
       });
     });
 
     // handleImages
-    const map = this.options.deriveImageMap(entity);
-    var sequence = Promise.resolve();
+    const map = deriveImageMap(entity);
+    let sequence = Promise.resolve();
     const images = entity.content.querySelectorAll('img');
     [].map.call(images, (image) => {
       const [url, savepath, src] = map.get(image.src);
       sequence = sequence.then(() => {
         const dir = path.dirname(savepath);
-        if(!fs.existsSync(dir))
-          mkdirs(dir);
+        if (!fs.existsSync(dir)) mkdirs(dir);
         loadImages(url).then((result) => {
           fs.writeFile(savepath, result, 'binary', (error) => {
             if (error) {
@@ -141,7 +166,7 @@ class Machine {
       return image;
     });
     
-    return sequence.then(() => {console.log(entity.content.outerHTML)});
+    return sequence;
   }
 
 }
@@ -154,7 +179,21 @@ const m = new Machine({
     content: '.entrybody',
     date: '.entrybottom',
   },
-  rules: () => {},
+  entry: '',
+  rules: (entry) => (connect) => {
+    const next = (entry) =>{
+      JSDOM.fromURL(entry).then((dom) => {
+        const aa = dom.window.document.querySelector('#daytable').querySelectorAll('a');
+        [].forEach.call(aa, (a) => {
+          connect(a.href);
+        });
+        const n = dom.window.document.querySelector('.next');
+        if (null !== n)
+          next(n.href);
+      });
+    };
+    setTimeout(() => next(entry), 1000 * (1 + Math.random()));
+  },
   purity: (entity) => {
     const dateText = entity.date.textContent.slice(0, 16);
     entity.date.textContent = dateText;
@@ -163,16 +202,23 @@ const m = new Machine({
   deriveImageMap: (entity) => {
     const hostname = '127.0.0.1:3000';
     const map = new Map();
+    const aa = entity.content.querySelectorAll('a');
+    if (aa.length !== 0) {
+      [].forEach.call(aa, (a) => {
+        a.replaceWith(a.children[0]);
+      })
+    }
     const images = entity.content.querySelectorAll('img');
     const date = new Date(entity.date.textContent);
-    const name = entity.url.slice(27, 42);
+    const name = /[a-z.]+(?=\/\?d)/.exec(entity.url)[0];
     const generateRandomStr = () => Math.random().toString(36).slice(2, 10);
+
     for (let image of images) {
       const savepath = `images/blog/${name}/${format(date, 'yyyy/MM/dd')}/${generateRandomStr()}.jpg`;
       const src = image.src;
       map.set(src, [
-         + src.slice(31, src.length),
-        path.resolve(__dirname, savepath),
+        src,
+        path.resolve(foldback(path.resolve(__dirname), 2), savepath),
         `${hostname}/${savepath}`
       ]);
     }
@@ -181,13 +227,17 @@ const m = new Machine({
   deriveLoadPath: (entity) => {
     const id = /\d+(?=\.php)/.exec(entity.title.children[0].href)[0];
     const date = new Date(entity.date.textContent);
-    const name = entity.url.slice(27, 43);
+    const name = /[a-z.]+(?=\/\?d)/.exec(entity.url)[0];
     const savepath = `views/blog/${name}/${format(date, 'yyyy/MM/dd')}${id}.html`;
-    return path.resolve(__dirname, savepath);
+    return path.resolve(foldback(path.resolve(__dirname), 2), savepath);
+  },
+  log: (level, msg) => {
+    logger[level](msg);
   }
 });
 
-m.connect();
+
+//m.run();
 
 // ------------------------- UTILS
 
@@ -251,4 +301,16 @@ function removeAllAttributes(element) {
   return element;
 }
 
+/**
+ * Foldback to parent path.
+ * @param {*} p 
+ * @param {*} level 
+ */
+function foldback(p, level) {
+  if (level === 0)
+    return path.resolve(p);
+  return foldback(path.dirname(p), level - 1);
+}
+
+console.log(foldback(path.resolve(__dirname), 1));
 

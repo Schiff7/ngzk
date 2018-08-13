@@ -1,15 +1,27 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var stylus = require('stylus');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const stylus = require('stylus');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const log4js = require('log4js');
 
-var app = express();
+log4js.configure({
+  appenders: {
+    app: { type: 'console' }
+  },
+  categories: {
+    default: { appenders: ['app'], level: 'info' }
+  }
+});
 
-app.use(logger('dev'));
+const logger = log4js.getLogger('app');
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+
+const app = express();
+
+app.use(log4js.connectLogger(logger));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
