@@ -1,5 +1,74 @@
-body
-  padding: 50px
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif
-a
-  color: #00B7FF
+*
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+
+.hide
+  display: none
+
+.show
+  display: block
+
+.nav-search
+  height: 60px
+  width: 100%
+  background-color: rgb(126,16,131)
+
+.nav-read
+  height: 100%
+  width: 350px
+  background-color: rgb(229,207,230)
+
+.nav
+  display: block
+  position: fixed
+  transition: all .75s ease
+  .top
+    .content
+      display: flex
+      justify-content: space-between
+      padding: 12px 15px
+      font-size: 14px
+      line-height: 1.5
+      .search
+        display: block
+        .form
+          .input-wrapper
+            display: block
+            padding: 3px 0
+            width: 300px
+            .input-label
+              display: flex
+              position: relative
+              justify-content: space-between
+              color: #fff
+              background-color: rgba(221, 160, 211, 0.125)
+              border: 0
+              border-radius: 3px
+              box-shadow: none
+              #search-input
+                display: table-cell
+                width: 100%
+                height: 30px
+                padding: 6px 8px
+                font-size: 16px
+                line-height: 20px
+                background: none
+                border: 0
+                border-radius: 3px
+                color: inherit
+                box-shadow: none
+                outline: none
+                vertical-align: middle
+  .left
+    .content
+      display: flex
+      height: 100%
+      .profile
+        .content
+          display: flex
+          .avatar
+            display: block
+            width: 124px
+            height: 150px
+

@@ -13,7 +13,7 @@ log4js.configure({
     crawler: { type: 'file', filename: path.resolve(__dirname, 'crawler.log') }
   },
   categories: {
-    default: { appenders: ['extract'], level: 'info' }
+    default: { appenders: ['crawler'], level: 'info' }
   }
 });
 
@@ -156,9 +156,7 @@ class Machine {
         if (!fs.existsSync(dir)) mkdirs(dir);
         loadImages(url).then((result) => {
           fs.writeFile(savepath, result, 'binary', (error) => {
-            if (error) {
-              console.log(error);
-            }
+            if (error) log('error', `WRITEIMAGE ${url}`);
           });
         });
       });
@@ -179,7 +177,7 @@ const m = new Machine({
     content: '.entrybody',
     date: '.entrybottom',
   },
-  entry: '',
+  entry: 'http://blog.nogizaka46.com/yuuki.yoda/?d=201802',
   rules: (entry) => (connect) => {
     const next = (entry) =>{
       JSDOM.fromURL(entry).then((dom) => {
@@ -212,7 +210,7 @@ const m = new Machine({
     const date = new Date(entity.date.textContent);
     const name = /[a-z.]+(?=\/\?d)/.exec(entity.url)[0];
     const generateRandomStr = () => Math.random().toString(36).slice(2, 10);
-
+    //const _303 = 'http://blog.nogizaka46.com/' + src.slice(31, src.length);
     for (let image of images) {
       const savepath = `images/blog/${name}/${format(date, 'yyyy/MM/dd')}/${generateRandomStr()}.jpg`;
       const src = image.src;
@@ -236,7 +234,7 @@ const m = new Machine({
   }
 });
 
-
+//m.connect('http://blog.nogizaka46.com/yuuki.yoda/?d=20180222');
 //m.run();
 
 // ------------------------- UTILS
@@ -311,6 +309,4 @@ function foldback(p, level) {
     return path.resolve(p);
   return foldback(path.dirname(p), level - 1);
 }
-
-console.log(foldback(path.resolve(__dirname), 1));
 
