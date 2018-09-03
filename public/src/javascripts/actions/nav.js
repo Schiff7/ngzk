@@ -1,22 +1,27 @@
 /* /public/src/javascript/actions/nav.js */
 
 
-export const NAV_TOP = 'NAV_TOP';
-export const NAV_LEFT = 'NAV_LEFT';
-export const NAV_HIDE = 'NAV_HIDE';
+export const SUBMIT = 'SUBMIT';
 
+export const submit = (name) => {
+  return {
+    type: SUBMIT,
+    name
+  };
+}
 
-export const navTop = (h) => ({
-  type: NAV_TOP,
-  h
-})
+export const INPUT = 'INPUT';
+export const RESET_INPUT = 'RESET_INPUT';
 
-export const navLeft = (h) => ({
-  type: NAV_LEFT,
-  h
-})
+export const input = (name) => {
 
-export const navHide = (h) => ({
-  type: NAV_HIDE,
-  h
-})
+  return name === ''
+  ? {
+    type: RESET_INPUT,
+    name
+  }
+  : {
+    type: INPUT,
+    name
+  };
+}

@@ -1,22 +1,28 @@
 /* /public/src/javascript/reducer/nav.js */
 import { combineReducers } from 'redux';
-import { NAV_HIDE, NAV_LEFT, NAV_TOP } from '../actions/nav';
+import { SUBMIT, INPUT, RESET_INPUT } from '../actions/nav';
+import { matches } from '../utils/names';
 
-const display = (state = {
-  nav: 'nav-search',
-  left: 'hide',
-  top: 'show',
-}, action) => {
+const person = (state = { name: '' }, action) => {
   switch (action.type) {
-    case NAV_TOP:
-      return { nav: 'nav-search', left: 'hide', top: 'show' };
-    case NAV_LEFT:
-      return { nav: 'nav-read', left: 'show', top: 'hide' };
-    case NAV_HIDE:
-      return { nav: 'nav-hide', left: 'hide', top: 'hide' };
+    case SUBMIT:
+      return { name: action.name };
     default:
       return state;
   }
 }
 
-export default combineReducers({ display });
+const hint = (state = { list: [], visible: 'hide', inputStyle: '' }, action) => {
+  const defaultState = { list: [], visible: 'hide', inputStyle: '' };
+  const list = matches(action.name);
+  switch (action.type) {
+    case RESET_INPUT:
+      return defaultState;
+    case INPUT:
+      return list.length === 0 ? defaultState : { list, visible:'show-block', inputStyle: 'show-hint' };
+    default:
+      return state;
+  }
+}
+
+export default combineReducers({ person, hint });

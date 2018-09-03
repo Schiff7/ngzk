@@ -1,8 +1,6 @@
 /* /public/src/javascript/utils/names.js */
 
-
-
-export const names = [
+const names = [
   { name: '秋元 真夏', hiragana : 'あきもと まなつ', roma: 'manatsu akimoto', nickname: [] },
   { name: '生田 絵梨花', hiragana : 'いくた えりか', roma: 'erika ikuta', nickname: [] },
   { name: '伊藤 かりん', hiragana : 'いとう かりん', roma: 'karin itou', nickname: [] },
@@ -28,16 +26,16 @@ export const names = [
   { name: '高山 一実', hiragana : 'たかやま かずみ', roma: 'kazumi takayama', nickname: [] },
   { name: '寺田 蘭世', hiragana : 'てらだ らんぜ', roma: 'ranze terada', nickname: [] },
   { name: '中田 花奈', hiragana : 'なかだ かな', roma: 'kana nakada', nickname: [] },
-  { name: '中村 麗乃', hiragana : 'なかむら れの', roma: 'reno namamura', nickname: [] },
+  { name: '中村 麗乃', hiragana : 'なかむら れの', roma: 'reno nakamura', nickname: [] },
   { name: '西野 七瀬', hiragana : 'にしの ななせ', roma: 'nanase nishino', nickname: [] },
   { name: '能條 愛未', hiragana : 'のうじょう あみ', roma: 'ami noujyou', nickname: [] },
   { name: '樋口 日奈', hiragana : 'ひぐち ひな', roma: 'hina higuchi', nickname: [] },
   { name: '星野 みなみ', hiragana : 'ほしの みなみ', roma: 'minami hoshino', nickname: [] },
   { name: '堀 未央奈', hiragana : 'ほり みおな', roma: 'miona hori', nickname: [] },
   { name: '松村 沙友里', hiragana : 'まつむら さゆり', roma: 'sayuri matsumura', nickname: [] },
-  { name: '向井 葉月', hiragana : 'むかい はづき', roma: 'haduki mukai', nickname: [] },
+  { name: '向井 葉月', hiragana : 'むかい はづき', roma: 'hazuki mukai', nickname: [] },
   { name: '山崎 怜奈', hiragana : 'やまざき れな', roma: 'rena yamazaki', nickname: [] },
-  { name: '山下 美月', hiragana : 'やました みづき', roma: 'haduki yamashita', nickname: [] },
+  { name: '山下 美月', hiragana : 'やました みづき', roma: 'mizuki yamashita', nickname: [] },
   { name: '吉田 綾乃クリスティー', hiragana : 'よしだ あやのくりすてぃー', roma: 'ayanochristie yoshida', nickname: [] },
   { name: '与田 祐希', hiragana : 'よだ ゆうき', roma: 'yuuki yoda', nickname: [] },
   { name: '若月 佑美', hiragana : 'わかつき ゆみ', roma: 'yumi wakatsuki', nickname: [] },
@@ -47,6 +45,43 @@ export const names = [
 
 
 
-const matches = (string) => {
+export const matches = ((names) => (string) => {
+  if (string === '')
+    return [];
+  const result = [];
+  names.forEach((item) => {
+    let priority = 0;
+    for (let key of Object.keys(item)) {
+      const value = item[key];
+      const regex = new RegExp(string);
+      if (typeof value === 'string') {
+        priority += regex.test(value) ? 1 : 0;
+      } else {
+        if (value.length !== 0) {
+          priority = value.reduce((_acc, _item) => {
+            return _acc += regex.test(_item) ? 1 : 0;
+          }, priority)
+        }
+      }
+    }
+    if (!!priority) {
+      result.push({info: item, priority: priority});
+    }
+  });
 
-}
+  const push = (arr, ...item) => {
+    arr.push(...item);
+    return arr;
+  }
+  const qs = (arr) => {
+    if (arr.length === 0) return arr;
+    const h =  arr.pop();
+    return push(
+      qs(arr.filter(x => x.priority > h.priority)), 
+      h, 
+      ...qs(arr.filter(x => x.priority <= h.priority))
+    );
+  }
+  return qs(result);
+})(names);
+

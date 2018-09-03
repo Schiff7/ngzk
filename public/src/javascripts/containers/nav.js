@@ -1,20 +1,15 @@
 /* /public/src/javascripts/container/nav.js */
 import { connect } from 'react-redux';
-import { navTop, navLeft, navHide } from '../actions/nav';
+import { submit, input } from '../actions/nav';
 import Nav from '../components/nav';
 
-const mapStateToProps = ({ nav: { display } }) => ({
-  display,
-  profile: {},
-  readingList: {},
+const mapStateToProps = ({ nav: { hint } }) => ({
+  hint
 })
 
 const mapDispatchToProps = dispatch => ({
-  handleSubmit: h => dispatch(navLeft(h)),
-  handleSelect: () => {},
-  handleClickOnBack: h => dispatch(navTop(h)), 
-  handleClickOnList: () => {}, 
-  handleClickOnProfile: () => {}, 
+  handleSubmit: (name) => dispatch(submit(name)),
+  handleInput: (name) => dispatch(input(name))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav);
