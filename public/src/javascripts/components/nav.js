@@ -1,14 +1,15 @@
 /* /public/src/javascript/components/nav.js */
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
+import logo from '@/images/others/ngzk.jpg';
 
-const Nav = ({ handleSubmit, handleInput, hint }) => {
+const Nav = ({ handleInput, hint }) => {
   return (
     <div className='nav'>
       <div className='content'>
-        <div>
+        <div className='search-wrapper'>
           <Logo />
-          <Search handleSubmit={handleSubmit} handleInput={handleInput} hint={hint} />
+          <Search handleInput={handleInput} hint={hint} />
         </div>
         <div>
           <Menu />
@@ -22,27 +23,40 @@ const Nav = ({ handleSubmit, handleInput, hint }) => {
 }
 
 const Logo = () => {
-  return (<div className='logo'></div>);
+  return (
+    <div className='logo'>
+      <img src={logo} />
+    </div>
+  );
 }
 
-const Search = ({ handleSubmit, handleInput, hint }) => {
+const Search = ({ handleInput, hint }) => {
   return (
     <div className='search'>
-      <Form onSubmit={handleSubmit} handleInput={handleInput} hint={hint} />
+      <Form handleInput={handleInput} hint={hint} />
     </div>
   );
 }
 
 const renderField = ({input, type, handleInput}) => {
+  const _handleInput = ({target}) => handleInput(target.value);
   return (
-    <input id='search-input' placeholder='Input a name...' {...input} type={type} onInput={({target}) => handleInput(target.value)} />
+    <input 
+      {...input} 
+      type={type} 
+      id='search-input' 
+      placeholder='Input a name...' 
+      onInput={_handleInput}
+      onFocus={_handleInput}
+      onBlur={() => handleInput('')}
+    />
   );
 }
 
 const Form = reduxForm({ form: 'search' })(
-  ({handleSubmit, handleInput, hint}) => {
+  ({handleInput, hint}) => {
     return (
-      <form className='form' onSubmit={handleSubmit}>
+      <form className='form'>
         <div className='input-wrapper'>
           <label className={`input-label ${hint.inputStyle}`}>
             <Field name='name' handleInput={handleInput} component={renderField} type='text' />
@@ -51,9 +65,9 @@ const Form = reduxForm({ form: 'search' })(
         <div className={`data-list ${hint.visible}`}>
           <ul>
             {hint.list.map((item, index) => (
-            <li key={index}>
-              <a>{`${item.info.name} (${item.info.roma})`}</a>
-            </li>
+              <li key={index}>
+                <a>{`${item.info.name} (${item.info.roma})`}</a>
+              </li>
             ))}
           </ul>
         </div>

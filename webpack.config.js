@@ -7,6 +7,16 @@ module.exports = {
     filename: 'main.js',
     path: path.resolve(__dirname, 'public/dist'),
   },
+  resolve: {
+    alias: {
+      '@': `${__dirname}/public/src/`,
+      'actions': `${__dirname}/public/src/javascripts/actions/`,
+      'reducers': `${__dirname}/public/src/javascripts/reducers/`,
+      'components': `${__dirname}/public/src/javascripts/components/`,
+      'containers': `${__dirname}/public/src/javascripts/containers/`,
+      'utils': `${__dirname}/public/src/javascripts/utils/`,
+    }
+  },
   module: {
     rules: [
       {
@@ -24,6 +34,18 @@ module.exports = {
           { loader: 'css-loader' },
           { loader: 'stylus-loader'},
         ]
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        include: [path.resolve(__dirname, 'public/src/images')],
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
       }
     ]
   },
@@ -32,6 +54,7 @@ module.exports = {
   ],
   devServer: {
     contentBase: './public/dist',
-    hot: true
+    hot: true,
+    historyApiFallback: true, // react-router
   }
 }

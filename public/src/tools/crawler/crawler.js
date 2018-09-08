@@ -2,6 +2,7 @@
 const http = require('http');
 const { URL } = require('url');
 const { JSDOM } = require('jsdom');
+const yaml = require('js-yaml');
 const path = require('path');
 const fs = require('fs');
 const log4js = require('log4js');
@@ -75,13 +76,6 @@ class Machine {
         for (let key of Object.keys(options)) {
           result[key] = find(options[key]);
         }
-        result.mixAll = () => {
-          let all = '';
-          for (let key of Object.keys(options)) {
-            all += result[key].outerHTML;
-          }
-          return all;
-        }
         resolve(result);
       });
     });
@@ -92,10 +86,9 @@ class Machine {
    * @param {*} url 
    */
   connect(url) {
+    const { log, extractOptions } = this.options;
     log('info', `CURRENT TARGET ${url}`);
-    const { log, extractOptions, purity } = this.options;
     this.extract(url, extractOptions).then((entity) => {
-      entity = purity(entity);
       this.handleImages(entity).then(() => {
         log('info', 'IMAGES DOWNLOADED');
       }).then(() => {
@@ -112,11 +105,11 @@ class Machine {
    * @param {*} entity 
    */
   loadHtml(entity) {
-    const { log, deriveLoadPath } = this.options;
+    const { log, deriveLoadPath, purity } = this.options;
     const savepath = deriveLoadPath(entity);
     const dir = path.dirname(savepath);
     if (!fs.existsSync(dir)) mkdirs(dir);
-    fs.writeFile(savepath, entity.mixAll(), 'utf-8', (error) => {
+    fs.writeFile(savepath, yaml.safeDump(purity(entity)), 'utf-8', (error) => {
       if (error) log('error',  `WRITEFILE ${url}`);
     });
   }
@@ -194,11 +187,16 @@ const m = new Machine({
   },
   purity: (entity) => {
     const dateText = entity.date.textContent.slice(0, 16);
-    entity.date.textContent = dateText;
-    return entity;
+    const pureEntity = Object.create(null);
+    pureEntity.url = entity.title.children[0].href;
+    pureEntity.title = entity.title.children[0].textContent;
+    pureEntity.date = dateText;
+    pureEntity.author = entity.author.textContent;
+    pureEntity.content = entity.content.innerHTML;
+    return pureEntity;
   },
   deriveImageMap: (entity) => {
-    const hostname = '127.0.0.1:3000';
+    const hostname = '';
     const map = new Map();
     const aa = entity.content.querySelectorAll('a');
     if (aa.length !== 0) {
@@ -207,7 +205,7 @@ const m = new Machine({
       })
     }
     const images = entity.content.querySelectorAll('img');
-    const date = new Date(entity.date.textContent);
+    const date = new Date(entity.date.textContent.slice(0, 16));
     const name = /[a-z.]+(?=\/\?d)/.exec(entity.url)[0];
     const generateRandomStr = () => Math.random().toString(36).slice(2, 10);
     //const _303 = 'http://blog.nogizaka46.com/' + src.slice(31, src.length);
@@ -224,9 +222,9 @@ const m = new Machine({
   },
   deriveLoadPath: (entity) => {
     const id = /\d+(?=\.php)/.exec(entity.title.children[0].href)[0];
-    const date = new Date(entity.date.textContent);
+    const date = new Date(entity.date.textContent.slice(0, 16));
     const name = /[a-z.]+(?=\/\?d)/.exec(entity.url)[0];
-    const savepath = `views/blog/${name}/${format(date, 'yyyy/MM/dd')}${id}.html`;
+    const savepath = `views/blog/${name}/${format(date, 'yyyy/MM/dd')}${id}.yaml`;
     return path.resolve(foldback(path.resolve(__dirname), 2), savepath);
   },
   log: (level, msg) => {
@@ -234,7 +232,7 @@ const m = new Machine({
   }
 });
 
-//m.connect('http://blog.nogizaka46.com/yuuki.yoda/?d=20180222');
+m.connect('http://blog.nogizaka46.com/yuuki.yoda/?d=20180222');
 //m.run();
 
 // ------------------------- UTILS

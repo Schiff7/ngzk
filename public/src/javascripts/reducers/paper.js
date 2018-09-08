@@ -1,0 +1,1 @@
+/* /public/src/javascript/reducers/paper.js */

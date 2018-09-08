@@ -1,16 +1,39 @@
 /* /public/src/javascript/index.js */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import rootReducer from './reducers';
-import Nav from './containers/nav';
-import '../stylesheets/style.styl';
+import { Route, Switch } from 'react-router';
+import { ConnectedRouter } from 'connected-react-router';
+import { applyMiddleware, compose, createStore } from 'redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { createBrowserHistory } from 'history';
+import rootReducer from 'reducers';
+import Nav from 'containers/nav';
+import { Blog } from 'containers';
+import '@/stylesheets/style.styl';
 
-const store = createStore(rootReducer);
+const history = createBrowserHistory();
+
+const store = createStore(
+  connectRouter(history)(rootReducer),
+  compose(
+    applyMiddleware(
+      routerMiddleware(history),
+    ),
+  ),
+);
 
 ReactDOM.render(
-  <Provider store={store}><Nav /></Provider>,
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <div className='container'>
+        <Nav />
+        <Switch>
+          <Route exact path='/' component={Blog} />
+        </Switch>
+      </div>
+    </ConnectedRouter>
+  </Provider>,
   document.querySelector('#root')
 );
 
