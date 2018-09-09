@@ -2,10 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Route, Switch } from 'react-router';
-import { ConnectedRouter } from 'connected-react-router';
-import { applyMiddleware, compose, createStore } from 'redux';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { Router, Route, Switch } from 'react-router-dom';
+import { createStore } from 'redux';
 import { createBrowserHistory } from 'history';
 import rootReducer from 'reducers';
 import Nav from 'containers/nav';
@@ -14,25 +12,18 @@ import '@/stylesheets/style.styl';
 
 const history = createBrowserHistory();
 
-const store = createStore(
-  connectRouter(history)(rootReducer),
-  compose(
-    applyMiddleware(
-      routerMiddleware(history),
-    ),
-  ),
-);
+const store = createStore(rootReducer);
 
 ReactDOM.render(
   <Provider store={store}>
-    <ConnectedRouter history={history}>
+    <Router history={history}>
       <div className='container'>
         <Nav />
         <Switch>
           <Route exact path='/' component={Blog} />
         </Switch>
       </div>
-    </ConnectedRouter>
+    </Router>
   </Provider>,
   document.querySelector('#root')
 );

@@ -170,7 +170,7 @@ const m = new Machine({
     content: '.entrybody',
     date: '.entrybottom',
   },
-  entry: 'http://blog.nogizaka46.com/yuuki.yoda/?d=201802',
+  entry: 'http://blog.nogizaka46.com/renka.iwamoto/?d=201802',
   rules: (entry) => (connect) => {
     const next = (entry) =>{
       JSDOM.fromURL(entry).then((dom) => {
@@ -232,8 +232,8 @@ const m = new Machine({
   }
 });
 
-m.connect('http://blog.nogizaka46.com/yuuki.yoda/?d=20180222');
-//m.run();
+//m.connect('http://blog.nogizaka46.com/renka.iwamoto/?d=20180222');
+m.run();
 
 // ------------------------- UTILS
 

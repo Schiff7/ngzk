@@ -75,70 +75,69 @@ body
           height: 32px
       .search
         display: block
-        .form
-          position: relative
-          font-size: 13px
-          .input-wrapper
-            display: block
-            padding: 3px 0
-            width: 300px
-            .show-hint
-              background-color: #eee !important
-              border-radius: 3px 3px 0 0 !important
-              color: #000 !important
-            .input-label
-              display: flex
-              position: relative
-              justify-content: space-between
-              color: #fff
-              background-color: rgba(221, 160, 211, 0.125)
+        position: relative
+        font-size: 13px
+        .input-wrapper
+          display: block
+          padding: 3px 0
+          width: 300px
+          .show-hint
+            background-color: #eee !important
+            border-radius: 3px 3px 0 0 !important
+            color: #000 !important
+          .input-label
+            display: flex
+            position: relative
+            justify-content: space-between
+            color: #fff
+            background-color: rgba(221, 160, 211, 0.125)
+            border: 0
+            border-radius: 3px
+            box-shadow: none
+            #search-input
+              display: table-cell
+              width: 100%
+              height: 30px
+              padding: 6px 8px
+              line-height: 20px
+              background: none
               border: 0
-              border-radius: 3px
+              color: inherit
               box-shadow: none
-              #search-input
-                display: table-cell
-                width: 100%
-                height: 30px
-                padding: 6px 8px
-                line-height: 20px
-                background: none
-                border: 0
-                color: inherit
-                box-shadow: none
-                outline: none
-                vertical-align: middle
-                &::-webkit-input-placeholder
-                  color: #d8bfd8
-                &::-moz-placeholder
-                  color: #d8bfd8
-          .data-list
-            position: absolute
-            top: 33px
-            width: 100%
-            border: 1px solid rgb(209, 213, 218)
-            border-radius: 0 0 3px 3px
-            ul
-              li
+              outline: none
+              vertical-align: middle
+              &::-webkit-input-placeholder
+                color: #d8bfd8
+              &::-moz-placeholder
+                color: #d8bfd8
+        .data-list
+          position: absolute
+          top: 33px
+          width: 100%
+          border: 1px solid rgb(209, 213, 218)
+          border-radius: 0 0 3px 3px
+          ul
+            li
+              display: flex
+              align-items: center
+              justify-content: flex-start
+              list-style: none
+              background-color: #fff
+              height: 35px
+              width: auto
+              border-bottom: 1px solid rgb(209, 213, 218)
+              &:last-child
+                border-bottom: 0
+              a
                 display: flex
+                flex: 1 1 auto
                 align-items: center
-                justify-content: flex-start
-                list-style: none
-                background-color: #fff
-                height: 35px
-                width: auto
-                border-bottom: 1px solid rgb(209, 213, 218)
-                &:last-child
-                  border-bottom: 0
-                a
-                  display: flex
-                  flex: 1 1 auto
-                  align-items: center
-                  text-decoration: none
-                  padding: 7px
-                  cursor: pointer
-                  &:hover
-                    color: #fff
-                    background-color: #7e1083
+                text-decoration: none
+                padding: 7px
+                cursor: pointer
+                &:hover
+                  color: #fff
+                  background-color: #7e1083
 
 
 

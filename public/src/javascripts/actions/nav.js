@@ -5,8 +5,7 @@ export const INPUT = 'INPUT';
 export const RESET_INPUT = 'RESET_INPUT';
 
 export const input = (name) => {
-
-  return name === ''
+  return typeof name !== 'string'
   ? {
     type: RESET_INPUT,
     name
