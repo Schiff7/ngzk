@@ -235,6 +235,9 @@ const m = new Machine({
 //m.connect('http://blog.nogizaka46.com/renka.iwamoto/?d=20180222');
 m.run();
 
+
+
+
 // ------------------------- UTILS
 
 /**

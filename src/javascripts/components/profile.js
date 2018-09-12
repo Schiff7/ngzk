@@ -16,7 +16,7 @@ const Header = () => {
   return (
     <div className='header'>
       <div className='title'><h3>Profile</h3></div>
-      <button>WIKI</button>
+      <button className='hide'>WIKI</button>
     </div>
   );
 }

@@ -21,3 +21,21 @@ export const toggleOptions = () => {
     type: TOGGLE_OPTIONS
   }
 }
+
+export const BOX_ENABLE_BLUR = 'BOX_ENABLE_BLUR';
+export const BOX_DISABLE_BLUR = 'BOX_DISABLE_BLUR';
+
+export const blur = (bool) => {
+  return {
+    type: bool ? BOX_ENABLE_BLUR : BOX_DISABLE_BLUR
+  }
+}
+
+export const SELECT = 'SELECT';
+
+export const select = (value) => {
+  return {
+    type: SELECT,
+    value
+  }
+}

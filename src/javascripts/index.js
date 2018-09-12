@@ -7,6 +7,7 @@ import { createStore } from 'redux';
 import { createBrowserHistory } from 'history';
 import rootReducer from 'reducers';
 import Nav from 'containers/nav';
+import Home from 'containers/home';
 import { Blog } from 'containers';
 import '@/stylesheets/style.styl';
 
@@ -20,7 +21,8 @@ ReactDOM.render(
       <div className='container'>
         <Nav />
         <Switch>
-          <Route exact path='/' component={Blog} />
+          <Route exact path='/' component={Home} />
+          <Route path='/blog/:name' component={Blog} />
         </Switch>
       </div>
     </Router>
