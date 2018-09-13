@@ -1,18 +1,26 @@
 /* /public/src/javascripts/container/nav.js */
 import { connect } from 'react-redux';
-import { input, blur, cacheInput } from 'actions/nav';
+import { navActions } from 'actions/nav';
 import Nav from 'components/nav';
 
-const mapStateToProps = ({ nav: { hint, blur, cache } }) => ({
+const mapStateToProps = ({ nav: { hint, cache, shouldBlur } }) => ({
   hint,
-  blur,
   cache,
+  shouldBlur,
 })
 
 const mapDispatchToProps = dispatch => ({
-  handleInput: (name) => dispatch(input(name)),
-  shouldBlur: (bool) => dispatch(blur(bool)),
-  cacheInput: (name) => dispatch(cacheInput(name))
+  handleInput: (name) => dispatch(
+    name === undefined 
+    ? navActions.nav.search.value.reset() 
+    : navActions.nav.search.value.set(name)
+  ),
+  shouldBlur: (bool) => dispatch(
+    bool 
+    ? navActions.nav.search.blur.enable() 
+    : navActions.nav.search.blur.disable()
+  ),
+  cacheInput: (name) => dispatch(navActions.nav.search.cache.push(name)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav);

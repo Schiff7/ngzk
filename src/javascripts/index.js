@@ -1,4 +1,4 @@
-/* /public/src/javascript/index.js */
+/* /src/javascript/index.js */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';

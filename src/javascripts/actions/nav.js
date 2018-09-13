@@ -1,41 +1,21 @@
-/* /public/src/javascript/actions/nav.js */
+/* /src/javascript/actions/nav.js */
+import { createActions } from 'redux-actions';
 
-
-export const INPUT = 'INPUT';
-export const RESET_INPUT = 'RESET_INPUT';
-
-export const input = (name) => {
-  return typeof name !== 'string'
-  ? {
-    type: RESET_INPUT,
+export const navActions = createActions({
+  NAV: {
+    SEARCH: {
+      VALUE: {
+        SET: name => ({ name }),
+        RESET: undefined
+      },
+      BLUR: {
+        ENABLE: undefined,
+        DISABLE: undefined
+      },
+      CACHE: {
+        PUSH: name => ({ name }),
+        CLEAR: undefined
+      }
+    }
   }
-  : {
-    type: INPUT,
-    name
-  };
-}
-
-export const ENABLE_BLUR = 'ENABLE_BLUR';
-export const DISABLE_BLUR = 'DISABLE_BLUR';
-
-export const blur = (bool) => {
-  return {
-    type: bool ? ENABLE_BLUR : DISABLE_BLUR,
-  };
-}
-
-export const CACHE_INPUT = 'CACHE_INPUT';
-export const CLEAR_CACHE = 'CLEAR_CACHE';
-
-export const cacheInput = (name) => {
-  return {
-    type: CACHE_INPUT,
-    name
-  };
-}
-
-export const clearCache = () => {
-  return {
-    type: CLEAR_CACHE
-  };
-}
+}, { namespace: '_' });

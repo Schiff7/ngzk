@@ -1,22 +1,15 @@
-/* /public/src/javascript/components/nav.js */
+/* /src/javascript/components/nav.js */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logo from '@/images/others/ngzk.jpg';
 
-const Nav = ({ handleInput, shouldBlur, cacheInput, hint, blur, cache }) => {
+const Nav = (props) => {
   return (
     <div className='nav'>
       <div className='content'>
         <div className='search-wrapper'>
           <Logo />
-          <Search 
-            handleInput={handleInput} 
-            shouldBlur={shouldBlur} 
-            cacheInput={cacheInput} 
-            blur={blur} 
-            hint={hint} 
-            cache={cache} 
-          />
+          <Search {...props} />
         </div>
         <div>
           <Menu />
@@ -32,12 +25,15 @@ const Nav = ({ handleInput, shouldBlur, cacheInput, hint, blur, cache }) => {
 const Logo = () => {
   return (
     <div className='logo'>
-      <Link to='/'><img src={logo} /></Link>
+      <Link to='/'>
+        <img src={logo} />
+      </Link>
     </div>
   );
 }
 
-const Search = ({ handleInput, shouldBlur, cacheInput, hint, blur, cache}) => {
+const Search = (props) => {
+  const { handleInput, shouldBlur, cacheInput, hint, cache } = props;
   const _handleInput = ({target}) => handleInput(target.value);
   const _handleClick = (item) => {
     handleInput(item.info.name); 
@@ -53,10 +49,10 @@ const Search = ({ handleInput, shouldBlur, cacheInput, hint, blur, cache}) => {
             name='name'
             type='text'
             id='search-input'
-            placeholder={'Input a name...'} 
+            placeholder='Input a name...' 
             onChange={_handleInput}
             onFocus={_handleInput}
-            onBlur={blur.shouldBlur ? handleInput : () => {}}
+            onBlur={shouldBlur ? handleInput : () => {}}
             value={hint.value}
           />
         </label>
@@ -64,7 +60,8 @@ const Search = ({ handleInput, shouldBlur, cacheInput, hint, blur, cache}) => {
       <div 
         className={`data-list ${hint.visible}`} 
         onMouseOver={() => shouldBlur(false)} 
-        onMouseOut={() => shouldBlur(true)}>
+        onMouseOut={() => shouldBlur(true)}
+      >
         <ul>
           {hint.list.map((item, index) => (
             <li key={index}>

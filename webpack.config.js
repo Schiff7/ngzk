@@ -2,33 +2,33 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './public/src/javascripts/index.js',
+  entry: './src/javascripts/index.js',
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'public/dist'),
+    path: path.resolve(__dirname, 'public'),
   },
   resolve: {
     alias: {
-      '@': `${__dirname}/public/src/`,
-      'actions': `${__dirname}/public/src/javascripts/actions/`,
-      'reducers': `${__dirname}/public/src/javascripts/reducers/`,
-      'components': `${__dirname}/public/src/javascripts/components/`,
-      'containers': `${__dirname}/public/src/javascripts/containers/`,
-      'utils': `${__dirname}/public/src/javascripts/utils/`,
+      '@': `${__dirname}/src/`,
+      'actions': `${__dirname}/src/javascripts/actions/`,
+      'reducers': `${__dirname}/src/javascripts/reducers/`,
+      'components': `${__dirname}/src/javascripts/components/`,
+      'containers': `${__dirname}/src/javascripts/containers/`,
+      'utils': `${__dirname}/src/javascripts/utils/`,
     }
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        include: [path.resolve(__dirname, 'public/src/javascripts')],
+        include: [path.resolve(__dirname, 'src/javascripts')],
         use: {
           loader: 'babel-loader'
         }
       },
       {
         test: /\.styl$/,
-        include: [path.resolve(__dirname, 'public/src/stylesheets')],
+        include: [path.resolve(__dirname, 'src/stylesheets')],
         use: [ 
           { loader: 'style-loader' },
           { loader: 'css-loader' },
@@ -37,7 +37,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif)$/,
-        include: [path.resolve(__dirname, 'public/src/images')],
+        include: [path.resolve(__dirname, 'src/images')],
         use: [
           {
             loader: 'url-loader',
@@ -53,7 +53,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
-    contentBase: './public/dist',
+    contentBase: './public',
     hot: true,
     historyApiFallback: true, // react-router
   }

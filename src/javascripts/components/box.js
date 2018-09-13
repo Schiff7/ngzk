@@ -2,30 +2,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Box = ({
-  handleClickOnInput,
-  handleBlurOnInput,
-  handleSelect,
-  shouldBlur,
-  selectedValue,
-  options,
-  blur,
-  match
-}) => {
+const Box = (props) => {
   return (
     <div className='box'>
       <div className='content'>
         <Header />
-        <Body 
-          blur={blur}
-          options={options}
-          selectedValue={selectedValue}
-          handleClickOnInput={handleClickOnInput} 
-          handleBlurOnInput={handleBlurOnInput} 
-          handleSelect={handleSelect}
-          shouldBlur={shouldBlur}
-          match={match}
-        />
+        <Body {...props} />
       </div>
     </div>
   );
@@ -40,7 +22,16 @@ const Header = () => {
   );
 }
 
-const Body = ({match, blur, options, selectedValue, handleClickOnInput, handleBlurOnInput, handleSelect, shouldBlur}) => {
+const Body = (props) => {
+  const {
+    match, 
+    options, 
+    selectedValue, 
+    handleClickOnInput, 
+    handleBlurOnInput, 
+    handleSelect, 
+    shouldBlur
+  } = props;
   return (
     <div className='body'>
       {/* time selector */}
@@ -50,7 +41,7 @@ const Body = ({match, blur, options, selectedValue, handleClickOnInput, handleBl
             readOnly={true}
             className={`${options.inputStyle}`} 
             onClick={handleClickOnInput} 
-            onBlur={blur.shouldBlur ? handleBlurOnInput : () => {}} 
+            onBlur={shouldBlur ? handleBlurOnInput : () => {}} 
             onChange={({target}) => handleSelect(target.value)}
             placeholder='...' 
             value={selectedValue}

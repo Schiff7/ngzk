@@ -1,40 +1,53 @@
 /* /public/src/javascript/reducer/box.js */
 import { combineReducers } from 'redux';
-import { SHOW_OPTIONS, HIDE_OPTIONS, TOGGLE_OPTIONS, SELECT, BOX_ENABLE_BLUR, BOX_DISABLE_BLUR } from 'actions/box';
+import { boxActions } from 'actions/box';
+import { handleActions } from 'redux-actions';
 
-const options = (state = { visible: 'hide', inputStyle: '' }, action) => {
-  switch (action.type) {
-    case SHOW_OPTIONS:
-      return { visible: 'show-block', inputStyle: 'show-options' }
-    case HIDE_OPTIONS:
-      return { visible: 'hide', inputStyle: '' }
-    case TOGGLE_OPTIONS:
-      return state.visible === 'hide'
-      ? { visible: 'show-block', inputStyle: 'show-options' }
-      : { visible: 'hide', inputStyle: '' }
-    default:
-      return state;
-  }
-}
+const options = handleActions(
+  new Map(
+    [
+      boxActions.box.selector.options.show,
+      (state, action) => ({ visible: 'show-block', inputStyle: 'show-options' })
+    ],
+    [
+      boxActions.box.selector.options.hide,
+      (state, action) => ({ visible: 'hide', inputStyle: '' })
+    ],
+    [
+      boxActions.box.selector.options.toggle,
+      (state, action) => (
+        state.visible === 'hide'
+        ? { visible: 'show-block', inputStyle: 'show-options' }
+        : { visible: 'hide', inputStyle: '' }
+      )
+    ]
+  ),
+  { visible: 'hide', inputStyle: '' }
+);
 
-const selectedValue = (state = '', action) => {
-  switch (action.type) {
-    case SELECT:
-      return action.value;
-    default:
-      return state;
-  }
-}
 
-const blur = (state = { shouldBlur: true }, action) => {
-  switch (action.type) {
-    case BOX_ENABLE_BLUR:
-      return { shouldBlur: true };
-    case BOX_DISABLE_BLUR:
-      return { shouldBlur: false };
-    default:
-      return state;
-  }
-}
+const selectedValue = handleActions(
+  new Map(
+    [
+      boxActions.box.selector.select,
+      (state, action) => action.payload.value
+    ]
+  ),
+  ''
+);
 
-export default combineReducers({ options, selectedValue, blur });
+const shouldBlur = handleActions(
+  new Map(
+    [
+      boxActions.box.selector.blur.enable,
+      (state, action) => true
+    ],
+    [
+      boxActions.box.selector.blur.disable,
+      (state, action) => false
+    ]
+  ),
+  true,
+);
+
+export default combineReducers({ options, selectedValue, shouldBlur });
