@@ -6,6 +6,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const fs = require('fs');
 const log4js = require('log4js');
+const { matches } = require('../../javascripts/utils/names');
 
 // Log configuration.
 
@@ -142,7 +143,7 @@ class Machine {
     const map = deriveImageMap(entity);
     let sequence = Promise.resolve();
     const images = entity.content.querySelectorAll('img');
-    [].map.call(images, (image) => {
+    Array.prototype.map.call(images, (image) => {
       const [url, savepath, src] = map.get(image.src);
       sequence = sequence.then(() => {
         const dir = path.dirname(savepath);
@@ -175,7 +176,7 @@ const m = new Machine({
     const next = (entry) =>{
       JSDOM.fromURL(entry).then((dom) => {
         const aa = dom.window.document.querySelector('#daytable').querySelectorAll('a');
-        [].forEach.call(aa, (a) => {
+        Array.prototype.forEach.call(aa, (a) => {
           connect(a.href);
         });
         const n = dom.window.document.querySelector('.next');
@@ -200,7 +201,7 @@ const m = new Machine({
     const map = new Map();
     const aa = entity.content.querySelectorAll('a');
     if (aa.length !== 0) {
-      [].forEach.call(aa, (a) => {
+      Array.prototype.forEach.call(aa, (a) => {
         a.replaceWith(a.children[0]);
       })
     }
@@ -233,8 +234,77 @@ const m = new Machine({
 });
 
 //m.connect('http://blog.nogizaka46.com/renka.iwamoto/?d=20180222');
-m.run();
+//m.run();
 
+const m2 = () => {
+  const map = Function.prototype.call.bind(Array.prototype.map);
+  JSDOM.fromURL('http://www.nogizaka46.com/member/').then((dom) => {
+    const doc = dom.window.document;
+    const units = map(doc.querySelectorAll('.unit'), (e) => {
+      const name = e.querySelector('.main').textContent;
+      const hiragana = (e.querySelector('.sub') || e.querySelector('.sub2')).textContent;
+      return {
+        link: e.firstChild.href,
+        info: { name, hiragana }
+      };
+    });
+    return units;
+  }).then((units) => {
+    return map(units, (unit) => {
+      return JSDOM.fromURL(unit.link).then((dom) => {
+        const doc = dom.window.document;
+        const profile = doc.querySelector('#profile');
+        const info = profile.querySelectorAll('dd');
+        return {
+          image: profile.querySelector('img').src,
+          info: Object.assign(unit.info, {
+            birthdate: info[0].textContent,
+            abo: info[1].textContent,
+            constellation: info[2].textContent,
+            stature: info[3].textContent,
+          })
+        };
+      })
+    })
+  }).then((profiles) =>{
+    profiles.forEach((profile) => {
+      profile.then((p) => {
+        // download image
+        console.log(p.info.name);
+        const name = matches(p.info.name)[0].info.roma.replace(/\s/,'_');
+        new Promise((resolve, reject) => {
+          http.get(new URL(p.image), (res) => {
+            let source = '';
+            if (res.statusCode !== 200) { console.log(p.image) }
+            res.setEncoding('binary');
+            res.on('data', (chunk) => {
+              source += chunk;
+            });
+            res.on('end', () => {
+              resolve(source);
+            })
+          });
+        }).then((result) => {
+          const savepath = path.resolve(foldback(__dirname, 2), 'images/member/');
+          if (!fs.existsSync(savepath)) mkdirs(savepath);
+          fs.writeFile(path.resolve(savepath, `${name}.jpg`), result, 'binary', (error) => {
+            if (error) console.log(error)
+          });
+        });
+        new Promise((resolve, reject) => {
+          const savepath = path.resolve(foldback(__dirname, 2), 'views/profile/');
+          if (!fs.existsSync(savepath)) mkdirs(savepath);
+          fs.writeFile(path.resolve(savepath, `${name}.yaml`), yaml.safeDump(p.info), 'utf-8', (error) => {
+            if (error) console.log(error);
+          });
+        })
+
+      })
+    })
+  })
+}
+
+m2();
 
 
 
