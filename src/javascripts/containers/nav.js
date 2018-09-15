@@ -11,12 +11,12 @@ const mapStateToProps = ({ nav: { hint, cache, shouldBlur } }) => ({
 
 const mapDispatchToProps = dispatch => ({
   handleInput: (name) => dispatch(
-    name === undefined 
+    typeof name !== 'string'
     ? navActions.nav.search.value.reset() 
     : navActions.nav.search.value.set(name)
   ),
-  shouldBlur: (bool) => dispatch(
-    bool 
+  blur: (bool) => dispatch(
+    bool
     ? navActions.nav.search.blur.enable() 
     : navActions.nav.search.blur.disable()
   ),

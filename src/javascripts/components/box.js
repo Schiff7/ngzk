@@ -1,4 +1,4 @@
-/* /public/src/javascripts/box.js */
+/* /src/javascripts/box.js */
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -26,6 +26,7 @@ const Body = (props) => {
   const {
     match, 
     options, 
+    blur,
     selectedValue, 
     handleClickOnInput, 
     handleBlurOnInput, 
@@ -50,8 +51,8 @@ const Body = (props) => {
         </label>
         <div 
           className={`options ${options.visible}`}
-          onMouseOver={() => shouldBlur(false)} 
-          onMouseOut={() => shouldBlur(true)}
+          onMouseOver={() => blur(false)} 
+          onMouseOut={() => blur(true)}
         >
           <ul>
             <li><Link to={`${match.url}/2018/09`} onClick={() => {handleSelect('2018/09'); handleBlurOnInput();}}>2018/09</Link></li>

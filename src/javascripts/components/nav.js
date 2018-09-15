@@ -33,13 +33,13 @@ const Logo = () => {
 }
 
 const Search = (props) => {
-  const { handleInput, shouldBlur, cacheInput, hint, cache } = props;
+  const { handleInput, shouldBlur, cacheInput, hint, blur, cache } = props;
   const _handleInput = ({target}) => handleInput(target.value);
   const _handleClick = (item) => {
     handleInput(item.info.name); 
     handleInput(); 
     cacheInput(item.info);
-    shouldBlur(true);
+    blur(true);
   }
   return (
     <div className='search'>
@@ -59,8 +59,8 @@ const Search = (props) => {
       </div>
       <div 
         className={`data-list ${hint.visible}`} 
-        onMouseOver={() => shouldBlur(false)} 
-        onMouseOut={() => shouldBlur(true)}
+        onMouseOver={() => blur(false)} 
+        onMouseOut={() => blur(true)}
       >
         <ul>
           {hint.list.map((item, index) => (

@@ -1,4 +1,4 @@
-/* /public/src/javascript/reducer/nav.js */
+/* /src/javascript/reducer/nav.js */
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import { navActions } from 'actions/nav';
@@ -8,13 +8,13 @@ const hint = handleActions(
   new Map([
     [
       navActions.nav.search.value.reset,
-      (state, action) => ({
+      (state, _) => ({
         ...state, list: [], visible: 'hide', inputStyle: ''
       })
     ],
     [
       navActions.nav.search.value.set,
-      (state, action) => {
+      (_, action) => {
         const { payload: { name } } = action;
         const list = matches(name);
         return (
@@ -29,22 +29,22 @@ const hint = handleActions(
 );
 
 const shouldBlur = handleActions(
-  new Map(
+  new Map([
     [
       navActions.nav.search.blur.enable,
-      (state, action) => true
+      () => true
     ],
     [
       navActions.nav.search.blur.disable,
-      (state, action) => false
+      () => false
     ]
-  ),
+  ]),
   true,
 );
 
 
 const cache = handleActions(
-  new Map(
+  new Map([
     [
       navActions.nav.search.cache.push,
       (state, action) => {
@@ -55,17 +55,20 @@ const cache = handleActions(
         const CACHESIZE = 5;
         const { history } = state;
         const { payload: { name } } = action;
-        return (
-          history.filter(item => item.roma !== name.roma).length === history.length 
+        const next = history.filter(item => item.roma !== name.roma).length === history.length 
           && history.length < CACHESIZE
           ? push(history, name)
           : history.length >= CACHESIZE
           ? push(history.slice(1), name)
-          : push(history.filter(item => item.roma !== name.roma), name)
-        );
+          : push(history.filter(item => item.roma !== name.roma), name);
+        return { history: next };
       }
+    ],
+    [
+      navActions.nav.search.cache.clear,
+      () => ({ history: [] })
     ]
-  ),
+  ]),
   { history: [] }
 );
 

@@ -1,4 +1,4 @@
-/* /public/src/javascript/utils/names.js */
+/* /src/javascript/utils/names.js */
 
 // names applied in the following function.
 const names = [
@@ -17,7 +17,7 @@ const names = [
   { name: '久保 史緒里', hiragana : 'くぼ しおり', roma: 'shiori kubo', nickname: ['ten'] },
   { name: '齋藤 飛鳥', hiragana : 'さいとう あすか', roma: 'asuka saitou', nickname: ['飞鸟'] },
   { name: '斉藤 優里', hiragana : 'さいとう ゆうり', roma: 'yuuri saitou', nickname: ['优蛋'] },
-  { name: '坂口 珠美', hiragana : 'さかぐち たまみ', roma: 'tamami sakaguchi', nickname: [] },
+  { name: '阪口 珠美', hiragana : 'さかぐち たまみ', roma: 'tamami sakaguchi', nickname: [] },
   { name: '桜井 玲香', hiragana : 'さくらい れいか', roma: 'reika sakurai', nickname: ['废队'] },
   { name: '佐々木 琴子', hiragana : 'ささき ことこ', roma: 'kotoko sasaki', nickname: ['KTK','ktk'] },
   { name: '佐藤 楓', hiragana : 'さとう かえで', roma: 'kaede satou', nickname: ['den'] },
@@ -33,7 +33,7 @@ const names = [
   { name: '樋口 日奈', hiragana : 'ひぐち ひな', roma: 'hina higuchi', nickname: [] },
   { name: '星野 みなみ', hiragana : 'ほしの みなみ', roma: 'minami hoshino', nickname: ['小南','18'] },
   { name: '堀 未央奈', hiragana : 'ほり みおな', roma: 'miona hori', nickname: ['猴莉'] },
-  { name: '松村 沙友里', hiragana : 'まつむら さゆり', roma: 'sayuri matsumura', nickname: ['傻'] },
+  { name: '松村 沙友理', hiragana : 'まつむら さゆり', roma: 'sayuri matsumura', nickname: ['傻'] },
   { name: '向井 葉月', hiragana : 'むかい はづき', roma: 'hazuki mukai', nickname: ['叶月'] },
   { name: '山崎 怜奈', hiragana : 'やまざき れな', roma: 'rena yamazaki', nickname: ['学霸'] },
   { name: '山下 美月', hiragana : 'やました みづき', roma: 'mizuki yamashita', nickname: [] },
@@ -43,8 +43,6 @@ const names = [
   { name: '渡辺 みり愛', hiragana : 'わたなべ みりあ', roma: 'miria watanabe', nickname: [] },
   { name: '和田 まあや', hiragana : 'わだ まあや', roma: 'maaya wada', nickname: ['baka'] },
 ]
-
-
 /**
  * Match the input string (name) with the full name infomation.
  * the function will match all the property of each full name infomation object,
