@@ -6,7 +6,6 @@ const yaml = require('js-yaml');
 const path = require('path');
 const fs = require('fs');
 const log4js = require('log4js');
-const { matches } = require('../../javascripts/utils/names');
 
 // Log configuration.
 
@@ -55,6 +54,7 @@ class Machine {
    */
   run() {
     const { log, rules, entry } = this.options;
+    log('info', '------------------------------------------');
     log('info', 'MISSION START');
     log('info', `ENTRY ${entry}`);
     Promise.resolve(rules(entry)(this.connect)).then(
@@ -91,12 +91,12 @@ class Machine {
     log('info', `CURRENT TARGET ${url}`);
     this.extract(url, extractOptions).then((entity) => {
       this.handleImages(entity).then(() => {
-        log('info', 'IMAGES DOWNLOADED');
+        log('info', `IMAGES DOWNLOADED ${url}`);
       }).then(() => {
         this.loadHtml(entity);
       }).then(() => {
-        log('info', 'HTML DOWNLOADED');
-        log('info', 'TARGET FINISHED');
+        log('info', `HTML DOWNLOADED ${url}`);
+        log('info', `TARGET FINISHED ${url}`);
       });
     })
   }
@@ -171,7 +171,7 @@ const m = new Machine({
     content: '.entrybody',
     date: '.entrybottom',
   },
-  entry: 'http://blog.nogizaka46.com/renka.iwamoto/?d=201802',
+  entry: 'http://blog.nogizaka46.com/mai.shiraishi/?d=201808',
   rules: (entry) => (connect) => {
     const next = (entry) =>{
       JSDOM.fromURL(entry).then((dom) => {
@@ -184,11 +184,15 @@ const m = new Machine({
           next(n.href);
       });
     };
-    setTimeout(() => next(entry), 1000 * (1 + Math.random()));
+    setTimeout(() => next(entry), 5000 * (1 + Math.random()));
   },
   purity: (entity) => {
     const dateText = entity.date.textContent.slice(0, 16);
     const pureEntity = Object.create(null);
+    const meta = entity.content.querySelector('meta');
+    if (!!meta) {
+      entity.content.removeChild(meta);
+    }
     pureEntity.url = entity.title.children[0].href;
     pureEntity.title = entity.title.children[0].textContent;
     pureEntity.date = dateText;
@@ -234,8 +238,10 @@ const m = new Machine({
 });
 
 //m.connect('http://blog.nogizaka46.com/renka.iwamoto/?d=20180222');
-//m.run();
+m.run();
 
+
+/*
 const m2 = () => {
   const map = Function.prototype.call.bind(Array.prototype.map);
   JSDOM.fromURL('http://www.nogizaka46.com/member/').then((dom) => {
@@ -272,6 +278,7 @@ const m2 = () => {
         // download image
         console.log(p.info.name);
         const name = matches(p.info.name)[0].info.roma.replace(/\s/,'_');
+        
         new Promise((resolve, reject) => {
           http.get(new URL(p.image), (res) => {
             let source = '';
@@ -305,7 +312,7 @@ const m2 = () => {
 }
 
 m2();
-
+*/
 
 
 // ------------------------- UTILS
