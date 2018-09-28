@@ -21,6 +21,9 @@ const logger = log4js.getLogger('jude');
 
 const log = (level, msg) => logger[level](msg);
 
+
+// ----------------------------- BLOG CRAWLER
+
 // Predefine.
 
 
@@ -42,10 +45,10 @@ class Machine {
 
   static async writeImage(url, path) {
     try {
-      const response = await axios(url, {method: 'get', responseType: 'stream' });
+      const response = await axios(url, {method: 'get', responseType: 'stream', timeout: 2000 });
       response.data.pipe(fs.createWriteStream(path));
     } catch (error) {
-      log('error', error);
+      log('error', JSON.stringify({ url, path }));
     }
   }
 }
@@ -168,7 +171,7 @@ const run = (entry) => {
   Dirty.rules(entry)(connect);
 }
 
-run('http://blog.nogizaka46.com/erika.ikuta/?d=201807');
+run('http://blog.nogizaka46.com/rena.yamazaki/?d=201602');
 
 // ------------------------- UTILS
 
@@ -223,7 +226,7 @@ function mkdirs(dirpath) {
 
 function rmdirs(dirpath) {
   if (!fs.existsSync(dirpath))
-    throw error('file or directory provided does not exist.')
+    throw error(`${dirpath} does not exist.`)
   if (fs.statSync(dirpath).isDirectory()) {
     const dirs = fs.readdirSync(dirpath);
     dirs.forEach(dir => {
@@ -256,3 +259,29 @@ function foldback(p, level) {
     return path.resolve(p);
   return foldback(path.dirname(p), level - 1);
 }
+
+function read(dirpath) {
+  if (!fs.existsSync(dirpath))
+    throw error(`${dirpath} does not exist.`)
+  const o = Object.create(null);
+  if (fs.statSync(dirpath).isDirectory()) {
+    const dirs = fs.readdirSync(dirpath);
+    dirs.forEach(dir => {
+      const fullPath = path.resolve(dirpath, dir);
+      if (fs.statSync(fullPath).isDirectory()) {
+        o[dir] = read(fullPath);
+      } else {
+        o[dir] = dir
+      }
+    });
+  } else {
+    return path.basename(dirpath);
+  }
+  return o;
+}
+
+/*
+fs.writeFile(`${foldback(__dirname, 2)}/views/contents/renka.iwamoto.yaml`, yaml.safeDump(read(`${foldback(__dirname, 2)}/views/blog/renka.iwamoto`)), 'utf-8', (error) => {
+  if (error) console.error(error);
+});
+*/
