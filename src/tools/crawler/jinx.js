@@ -122,14 +122,17 @@ class Utils {
    * @param {*} info 
    * @param {*} times 
    */
-  static async retry (func, info, times) {
+  static async retry (func) {
     let result = null;
-    for ( let i = 0; i < times; i++ ) {
+    while(true) {
       try {
         result = await func();
         break; 
-      } catch (error) {}
-
+      } catch (error) {
+        // ...
+        console.log('requested error, will try again 5s later.')
+        Utils.sleep(5000);
+      }
     }
     return result;
   }
@@ -147,7 +150,7 @@ class Utils {
    * 
    * @param {*} ms 
    */
-  static delay(ms) {
+  static sleep(ms) {
     return new Promise((resolve, _) => {
       setTimeout(resolve, ms, 'done');
     });
@@ -162,7 +165,7 @@ class Utils {
     // return Promise.all(promises);
     const results = [];
     for (let executor of executors) {
-      if (ms) await Utils.delay(ms);
+      if (ms) await Utils.sleep(ms);
       const result = await executor();
       results.push(result);
     }
@@ -211,7 +214,7 @@ class Machine {
       deriveImageMap: undefined,
       deriveLoadPath: undefined,
     }
-    this.record = {};
+    this.records = {};
     Object.assign(this.conf, conf);
     // bind this.
     this.extract = this.extract.bind(this);
@@ -241,20 +244,19 @@ class Machine {
     const o = await this.extract(url, options);
     console.log('\t\t extracted.');
     // handle images
-    const records = await this.handleImages(o, deriveImageMap);
+    const images = await this.handleImages(o, deriveImageMap);
     console.log('\t\t images handled.');
-    log('info', records);
     // handle blog
     const savepath = deriveLoadPath(o);
     const dir = path.dirname(savepath);
     if (!fs.existsSync(dir)) Utils.mkdirs(dir);
     // ...
-    const feedback = await new Promise((resolve, reject) => {
+    const views = await new Promise((resolve, reject) => {
       const writable = fs.createWriteStream(savepath);
       writable.write(purity(o), 'utf-8', (error) => {
         if (error) reject(error);
       });
-      resolve(Utils.action('view', { url }));
+      resolve(Utils.action('views', { url }));
     }).then(
       (i) => i,
       (error) => {
@@ -263,9 +265,8 @@ class Machine {
       }
     );
     console.log('\t\t wrote.');
-    log('info', feedback);
     // ...
-    return Utils.action('connect', { url })
+    return Utils.action('connect', { connect: { images, views } });
   }
 
   /**
@@ -274,9 +275,10 @@ class Machine {
    * @param {*} options 
    */
   async extract(url, options) {
-    const response = await Utils.retry(
-      () => axios(url, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }),
-      () => log('error', Utils.action('extract', { url })), 3);
+    // const response = await Utils.retry(
+    //   () => axios(url, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }),
+    //   () => log('error', Utils.action('extract', { url })), 3);
+    const response = await retry(() => axios(url, { method: 'get', responseEncoding: 'utf8', timeout: 3000 }));
     const doc = JSDOM.fragment(response.data);
     const result = { url };
     for (let key of Object.keys(options)) {
@@ -294,7 +296,7 @@ class Machine {
     // const response = await Utils.retry(
     //   () => axios(url, {method: 'get', responseType: 'stream', timeout: 5000 }),
     //   () => log('error', Utils.action('image', { url, path })), 3);
-    const response = await axios(url, {method: 'get', responseType: 'stream', timeout: 5000 });
+    const response = await retry(() => axios(url, {method: 'get', responseType: 'stream', timeout: 5000 }));
     // ...
     const feedback = await new Promise((resolve, reject) => {
       response.data.pipe(fs.createWriteStream(path), (error) => {
@@ -342,7 +344,7 @@ class Machine {
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/yumi.wakatsuki/?d=201111',
+  entry: 'http://blog.nogizaka46.com/shiori.kubo/?d=201802',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -354,11 +356,12 @@ const m = new Machine({
       // const response = await Utils.retry(
       //   () => axios(entry, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }),
       //   () => log('error', Utils.action('next', { entry })), 3);
-      const response = await axios(entry, { method: 'get', responseEncoding: 'utf8', timeout: 5000 });
+      const response = await retry(() => axios(entry, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }));
       const doc = JSDOM.fragment(response.data);
       const links = doc.querySelector('#daytable').querySelectorAll('a');
       const connects = [...links].map((link) => () => connect(link.href));
       const feedback = await Utils.all(connects, 1500);
+      log('info', feedback);
       const n = doc.querySelector('.next');
       // if (!!n) next(n.href);
       if (!!n) return n;
@@ -366,17 +369,13 @@ const m = new Machine({
     let k = entry;
     while(k) {
       console.log(`next ${k}`);
-      try {
-        k = await next(k);
-      } catch (error) {
-        // ...
-      }
+      k = await next(k);
     }
   },
   deriveLoadPath: (o) => {
     const id = o.title.firstChild.href.search(/\d+(?=\.php)/);
     const date = new Date(o.date.textContent.slice(0, 16));
-    const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0];
+    const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0].replace(/\./, '_');
     const savepath = `views/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}${id}.yaml`;
     return path.resolve(Utils.foldback(__dirname, 2), savepath);
   },
@@ -391,7 +390,7 @@ const m = new Machine({
     }
     const images = o.content.querySelectorAll('img');
     const date = new Date(o.date.textContent.slice(0, 16));
-    const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0];
+    const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0].replace(/\./, '_');
     const randomStr = () => Math.random().toString(36).slice(2, 10);
     for (let image of images) {
       const savepath = `images/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}/${randomStr()}.jpg`;
@@ -420,4 +419,16 @@ const m = new Machine({
   }
 });
 
-m.run();
+// m.run();
+
+// function createContents(name) {
+//   const from = path.resolve(Utils.foldback(__dirname, 2), 'views/blog');
+//   const to = path.resolve(Utils.foldback(__dirname, 2), 'views/contents');
+//   const contents = yaml.dump(Utils.read(path.resolve(from, name)));
+//   const writable = fs.createWriteStream(path.resolve(to, `${name}.yaml`));
+//   writable.write(contents, 'utf-8', (error) => { if (error) console.error(error) });
+// }
+
+// createContents('yuuki_yoda');
+// createContents('mizuki_yamashita');
+// createContents('hazuki_mukai');
