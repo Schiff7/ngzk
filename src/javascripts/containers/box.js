@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Box from 'components/box';
 import { boxActions } from 'actions/box';
 
-const mapStateToProps = ({ box: { options, selectedValue, shouldBlur } }) => ({
+const mapStateToProps = ({ pure: { box: { options, selectedValue, shouldBlur } } }) => ({
   options,
   selectedValue,
   shouldBlur,

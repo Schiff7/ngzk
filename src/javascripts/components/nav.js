@@ -33,13 +33,14 @@ const Logo = () => {
 }
 
 const Search = (props) => {
-  const { handleInput, shouldBlur, cacheInput, hint, blur, cache } = props;
+  const { handleInput, shouldBlur, cacheInput, hint, blur, cache, loadProf } = props;
   const _handleInput = ({target}) => handleInput(target.value);
   const _handleClick = (item) => {
     handleInput(item.info.name); 
     handleInput(); 
     cacheInput(item.info);
     blur(true);
+    loadProf(item.info.roma.replace(/\s/, '_'));
   }
   return (
     <div className='search'>
@@ -65,7 +66,7 @@ const Search = (props) => {
         <ul>
           {hint.list.map((item, index) => (
             <li key={index}>
-              <Link onClick={() =>_handleClick(item)} to={`/blog/${item.info.roma.replace(/\s/, '.')}`}>
+              <Link onClick={() =>_handleClick(item)} to={`/blog/${item.info.roma.replace(/\s/, '_')}`}>
                 {`${item.info.name} (${item.info.roma})`}
               </Link>
             </li>

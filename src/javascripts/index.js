@@ -3,9 +3,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { createBrowserHistory } from 'history';
-import rootReducer from 'reducers';
+import pureReducer from 'reducers';
+import impureReducer from 'sagas/reducers';
+import saga from 'sagas/sagas';
+import createSagaMiddleware from 'redux-saga';
 import Nav from 'containers/nav';
 import Home from 'containers/home';
 import { Blog } from 'containers';
@@ -13,7 +16,14 @@ import '@/stylesheets/style.styl';
 
 const history = createBrowserHistory();
 
-const store = createStore(rootReducer);
+const sagaMiddleware = createSagaMiddleware();
+
+const rootReducer = combineReducers({ pure: pureReducer, impure: impureReducer });
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(sagaMiddleware)
+);
 
 ReactDOM.render(
   <Provider store={store}>
@@ -29,4 +39,6 @@ ReactDOM.render(
   </Provider>,
   document.querySelector('#root')
 );
+
+sagaMiddleware.run(saga);
 

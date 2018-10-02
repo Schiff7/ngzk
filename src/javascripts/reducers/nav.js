@@ -1,8 +1,8 @@
-/* /src/javascript/reducer/nav.js */
+// /src/javascript/reducer/nav.js
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import { navActions } from 'actions/nav';
-import { matches } from 'utils/names';
+import utils from 'utils';
 
 const hint = handleActions(
   new Map([
@@ -16,7 +16,7 @@ const hint = handleActions(
       navActions.nav.search.value.set,
       (_, action) => {
         const { payload: { name } } = action;
-        const list = matches(name);
+        const list = utils.matches(name);
         return (
           list.length === 0
           ? { value: name, list: [], visible: 'hide', inputStyle: '' }

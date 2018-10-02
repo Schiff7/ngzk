@@ -8,7 +8,7 @@ export const Blog = ({match}) => {
   return (
     <div className='blog'>
       <div className='left'>
-        <Profile />
+        <Profile match={match} />
         <Box match={match} />
       </div>
       <div className='right'>

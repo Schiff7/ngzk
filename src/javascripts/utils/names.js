@@ -52,7 +52,7 @@ const names = [
  * @param names applied
  * @param string input string
  */
-export const matches = ((names) => (string) => {
+const matches = ((names) => (string) => {
   if (string === '')
     return [];
   const result = [];
@@ -90,4 +90,6 @@ export const matches = ((names) => (string) => {
   }
   return qs(result);
 })(names);
+
+export default matches;
 

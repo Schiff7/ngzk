@@ -1,16 +1,16 @@
 /* /public/src/javascript/components/profile.js */
 import React from 'react';
 
-const Profile = () => {
+const Profile = (props) => {
   return (
     <div className='profile'>
       <div className='content'>
         <Header />
-        <Body />
+        <Body {...props} />
       </div>
     </div>
   );
-}
+} 
 
 const Header = () => {
   return (
@@ -21,22 +21,23 @@ const Header = () => {
   );
 }
 
-const Body = () => {
+const Body = (props) => {
+  const { prof } = props;
   return (
     <div className='body'>
       <div className='avatar'>
-        <img />
+        <img src={`https://nyctophilia.github.io/ngzk/src/images/member/${prof.name}.jpg`} />
       </div>
       <div className='info'>
-        <h3>生田 絵梨花</h3>
+        <h3>{prof.info.name}</h3>
         <p> 
-          1997年1月22日生
+          {prof.info.birthdate}生
           <br />
-          血液型：A型
+          血液型：{prof.info.abo}
           <br />
-          星座：みずがめ座
+          星座：{prof.info.constellation}
           <br />
-          身長：160cm
+          身長：{prof.info.stature}
         </p>
       </div>
     </div>

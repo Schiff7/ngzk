@@ -2,12 +2,11 @@
 import { connect } from 'react-redux';
 import Profile from 'components/profile';
 
-const mapStateToProps = ({}) => ({
-
+const mapStateToProps = ({ impure: { prof } }) => ({
+  prof
 })
 
 const mapDispatchToProps = dispatch => ({
-
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
