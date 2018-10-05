@@ -126,12 +126,14 @@ class Utils {
     let result = null;
     while(true) {
       try {
-        result = await func();
+        result = await Promise.race([func(), new Promise((resolve, reject) => {
+          setTimeout(() => reject(new Error('timeout')), 10000);
+        })]);
         break; 
       } catch (error) {
         // ...
         console.log('requested error, will try again 5s later.')
-        Utils.sleep(5000);
+        await Utils.sleep(5000);
       }
     }
     return result;
@@ -275,10 +277,7 @@ class Machine {
    * @param {*} options 
    */
   async extract(url, options) {
-    // const response = await Utils.retry(
-    //   () => axios(url, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }),
-    //   () => log('error', Utils.action('extract', { url })), 3);
-    const response = await retry(() => axios(url, { method: 'get', responseEncoding: 'utf8', timeout: 3000 }));
+    const response = await Utils.retry(() => axios({ url, timeout: 5000 }));
     const doc = JSDOM.fragment(response.data);
     const result = { url };
     for (let key of Object.keys(options)) {
@@ -293,10 +292,7 @@ class Machine {
    * @param {*} path 
    */
   async writeImage(url, path) {
-    // const response = await Utils.retry(
-    //   () => axios(url, {method: 'get', responseType: 'stream', timeout: 5000 }),
-    //   () => log('error', Utils.action('image', { url, path })), 3);
-    const response = await retry(() => axios(url, {method: 'get', responseType: 'stream', timeout: 5000 }));
+    const response = await Utils.retry(() => axios({ url, timeout: 5000, responseType: 'stream' }));
     // ...
     const feedback = await new Promise((resolve, reject) => {
       response.data.pipe(fs.createWriteStream(path), (error) => {
@@ -338,13 +334,13 @@ class Machine {
       requests.push(request);
       Utils.resetAttributes(image, { src });
     });
-    const records = await Utils.all(requests, 1500);
+    const records = await Utils.all(requests, 1000);
     return records;
   }
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/shiori.kubo/?d=201802',
+  entry: 'http://blog.nogizaka46.com/yumi.wakatsuki/?d=201412',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -353,10 +349,7 @@ const m = new Machine({
   },
   rules: (entry) => async (connect) => {
     const next = async (entry) =>{
-      // const response = await Utils.retry(
-      //   () => axios(entry, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }),
-      //   () => log('error', Utils.action('next', { entry })), 3);
-      const response = await retry(() => axios(entry, { method: 'get', responseEncoding: 'utf8', timeout: 5000 }));
+      const response = await Utils.retry(() => axios({ url: entry, timeout: 5000 }));
       const doc = JSDOM.fragment(response.data);
       const links = doc.querySelector('#daytable').querySelectorAll('a');
       const connects = [...links].map((link) => () => connect(link.href));
@@ -364,13 +357,14 @@ const m = new Machine({
       log('info', feedback);
       const n = doc.querySelector('.next');
       // if (!!n) next(n.href);
-      if (!!n) return n;
+      if (!!n) return n.href;
     };
     let k = entry;
     while(k) {
       console.log(`next ${k}`);
       k = await next(k);
     }
+    return;
   },
   deriveLoadPath: (o) => {
     const id = o.title.firstChild.href.search(/\d+(?=\.php)/);
@@ -419,7 +413,10 @@ const m = new Machine({
   }
 });
 
-// m.run();
+
+// m.connect('http://blog.nogizaka46.com/yumi.wakatsuki/?d=20120727');
+// m.connect('http://blog.nogizaka46.com/yumi.wakatsuki/?d=20120830');
+m.run();
 
 // function createContents(name) {
 //   const from = path.resolve(Utils.foldback(__dirname, 2), 'views/blog');
