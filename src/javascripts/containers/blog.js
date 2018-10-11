@@ -6,7 +6,7 @@ import Files from 'components/files';
 import Article from 'components/article';
 import Nav from 'components/nav';
 
-const Blog = () => (
+export default () => <Route path='/blog' render={() => (
   <div className='container'>
     <Route path='/blog' component={Nav} />
     <div className='blog'>
@@ -26,6 +26,4 @@ const Blog = () => (
       </Switch>
     </div>
   </div>
-);
-
-export default () => <Route path='/blog' component={Blog} />
+)}/>
