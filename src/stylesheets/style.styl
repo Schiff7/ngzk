@@ -12,435 +12,183 @@ body
 .hide
   display: none !important
 
+canvas
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 
 
 .container
-  display: block
-  &:before
-    content: ''
-    display: block
-    z-index: -1
-    position: fixed
-    left: -10%
-    top: -10%
-    width: 120%
-    height: 120%
-    filter: blur(70px)
-    // background: #7e1083 url(../images/others/pattern.jpg) center 0 repeat
-
+  background-color: #eee
 
 .blog
   display: flex
   justify-content: space-between
-  width: 980px
+  max-width: 1130px
   margin-left: auto
   margin-right: auto
-  margin-top: 75px
   margin-bottom: 75px
   padding: 15px 15px
   border-radius: 3px
-  background-color: #fff
   .left
     width: 33.333333%
+    padding: 10px
   .right
     width: 66.666667%
+    padding: 10px
 
 .nav
-  z-index: 99
-  display: block
-  position: fixed
-  left: 0
-  top: 0
-  height: 60px
-  width: 100%
-  background-color: #7e1083
-  .content
-    display: flex
-    justify-content: space-between
-    padding: 12px 200px
-    font-size: 14px
-    line-height: 1.5
-    .search-wrapper
-      display: flex
-      justify-content: space-between
-      width: 350px
-      .logo
-        display: flex
-        padding: 2px
-        width: 36px
-        height: 36px
-        user-select: none
-        background: radial-gradient(circle, #fff, #7e1083)
-        img
-          width: 32px
-          height: 32px
-      .search
-        display: block
-        position: relative
-        font-size: 13px
-        .input-wrapper
-          display: block
-          padding: 3px 0
-          width: 300px
-          .show-hint
-            background-color: #fff !important
-            border-radius: 3px 3px 0 0 !important
-            color: #000 !important
-          .input-label
-            display: flex
-            position: relative
-            justify-content: space-between
-            color: #fff
-            background-color: rgba(221, 160, 211, 0.125)
-            border: 0
-            border-radius: 3px
-            box-shadow: none
-            #search-input
-              display: table-cell
-              width: 100%
-              height: 30px
-              padding: 6px 8px
-              line-height: 20px
-              background: none
-              border: 0
-              color: inherit
-              box-shadow: none
-              outline: none
-              vertical-align: middle
-              &::-webkit-input-placeholder
-                color: #d8bfd8
-              &::-moz-placeholder
-                color: #d8bfd8
-        .data-list
-          position: absolute
-          top: 33px
-          width: 100%
-          border: 1px solid rgb(209, 213, 218)
-          border-radius: 0 0 3px 3px
-          ul
-            li
-              display: flex
-              align-items: center
-              justify-content: flex-start
-              list-style: none
-              background-color: #fff
-              height: 35px
-              width: auto
-              border-bottom: 1px solid rgb(209, 213, 218)
-              &:last-child
-                border-bottom: 0
-              a
-                display: flex
-                flex: 1 1 auto
-                align-items: center
-                text-decoration: none
-                padding: 7px
-                cursor: pointer
-                color: #1b1f23
-                &:hover
-                  color: #fff
-                  background-color: #7e1083
-
-
-
-
-
-.paper
   display: flex
-  justify-content: center
-  .content
-    padding: 15px
-    background-color: #fff
-    border-radius: 3px
-    width: 500px
-    .header
-      position: relative
-      display: block
-      &:after
-        content: ''
-        position: absolute
-        width: 0
-        height: 0
-        left: 10%
-        bottom: -9px
-        border: 0 solid #7e1083
-        border-bottom: none
-        border-left-color: transparent
-        border-right-color: transparent
-      &:hover::after
-        border: 6px solid #7e1083
-        border-bottom: none
-        border-left-color: transparent
-        border-right-color: transparent
-        transition: all 0s ease .75s
-      .brace
-        display: flex
-        justify-content: center
-        width: 100%
-        &:hover .date
-          background-color: #7e1083
-          color: #fff
-          transition: all .5s ease .75s
-        &:hover::before
-        &:hover::after
-          border-radius: 6px
-          width: 100%
-          height 100%
-        .date
-          width: 25%
-          padding: 5px 15px
-          .year-month
-            font-size: 80%
-            padding-top: 3px
-          .day
-            font-size: 45px
-            padding: 0 5px
-          .week
-            font-size: 80%
-            padding: 0 10px
-        .author-and-title
-          width: 75%
-          .author
-            font-size: 80%
-            border-bottom: dashed 1px 
+  justify-content: space-between
+  align-items: center
+  height: 215px
+  padding: 20px
+  text-transform: uppercase
+  background-color: #fff
+  font-size: 14px;
+  .menu
+    a
+      text-decoration: none;
+      color: #666;
+      letter-spacing: 2px;
+    .selected
+      border-bottom: 1px solid #7e1083
+    span
+      padding: 4px 12px;
+      color: #cdcdcd;
+  .search
+    position: relative
+    border: none
+    width: 300px
+    height: 35px
+    input
+      border: none 
+      outline: none
+      width: 100%
+      padding: 5px
+      background: none
+      color: #1b1f23
+      &:focus
+        border-bottom: 1px solid #1b1f23
+    .data-list
+      ul
+        li
+          display: flex
+          align-items: center
+          justify-content: flex-start
+          list-style: none
+          a
+            position: relative
             padding: 5px
-          .title
-            font-size: 80%
-            padding: 5px
-      .brace:before
-        content: ''
-        position: absolute
-        top: -3px
-        left: -3px
-        border-style: solid 
-        border-width: 3px 0 0 3px
-        border-color: #7e1083
-        width: 30%
-        height: 70%
-        transition: all .75s ease
-      .brace:after
-        content: ''
-        position: absolute
-        right: -3px
-        bottom: -3px
-        border-style: solid 
-        border-width: 0 3px 3px 0
-        border-color: #7e1083
-        width: 30%
-        height: 70%
-        transition: all .75s ease
-    .body
-      font-size: 80%
-      line-height: 2
+            flex: 1 1 auto
+            text-decoration: none 
+            color: #1b1f23
+            &:hover:before
+              position: absolute
+              content: '\3E'
+              left: -10px
+
+
+.article
+  border-radius: 4px
+  box-shadow: 0px 1px 1px rgba(0,0,0,.05);
+  background-color: #fff
+  h3
+    text-align: center
+    padding: 58px 0 40px 0
+    font-size: 14px
+    border-bottom: 1px solid #eee
+  .text
+    font-size: 80%
+    line-height: 2
+    padding: 5%
+    text-align: center
+    
+    
 
 
 
-.box
+
+
+.files
   display: block
   margin-top: 20px
-  .content
-    background-color: #fff
-    border: 1px solid rgb(209, 213, 218)
-    border-radius: 3px
-    .header
-      display: flex
-      justify-content: space-between
-      align-items: center
-      padding: 8px 16px
-      margin: -1px -1px 0 -1px
-      background-color: #f6f8fa
-      border-color: #d1d5da
-      border-style: solid
-      border-width: 1px;
-      border-top-left-radius: 3px
-      border-top-right-radius: 3px
-      h3
-        line-height: 1.25
-        font-size: 14px;
-        font-weight: 600;
-      button
-        padding: 3px 10px
-        font-size: 12px
-        font-weight: 600
-        line-height: 20px
+  background-color: #fff
+  border-radius: 4px
+  .header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    padding: 8px 16px
+    h3
+      line-height: 1.25
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase
+  .body
+    display: block
+    min-height: 350px
+    padding: 8px 16px
+    .tree
+      user-select: none
+      div
         cursor: pointer
-        color: #fff
-        user-select: none
-        white-space: nowrap
-        vertical-align: middle
-        background-color: #7e1083;
-        background-image: linear-gradient(-180deg, #b016b7 0%, #7e1083 90%);
-        background-repeat: repeat-x
-        background-position: -1px -1px
-        background-size: 110% 110%
-        border: 1px solid rgba(27,31,35,0.2)
-        border-radius: 0.25em
-        text-transform: none
-        overflow: visible
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    .body
-      display: block
-      height: 350px
-      padding: 8px 16px
-      .time
-        padding: 8px 0
-        position: relative
-        label
-          display: block
-          .show-options
-            border-radius: 3px 3px 0 0 !important
-          input
-            display: block
-            min-height: 34px
-            width: 100%
-            padding: 6px 8px
-            font-size: 14px
-            line-height: 20px
-            caret-color: transparent
-            color: #24292e
-            vertical-align: middle
-            background-color: #fff
-            background-repeat: no-repeat
-            background-position: right 8px center
-            border: 1px solid #d1d5da
-            border-radius: 3px
-            cursor: default
-            outline: none
-            box-shadow: inset 0 1px 2px rgba(27,31,35,0.075)
-          span
-            position: absolute        
-            width: 0
-            height: 0
-            right: 10px
-            top: 45%
-            border: 6px solid #000
-            border-bottom: none
-            border-left-color: transparent
-            border-right-color: transparent
-        .options
-          position: absolute
-          top: 41px
-          width: 100%
-          border: 1px solid rgb(209, 213, 218)
-          border-radius: 0 0 3px 3px
-          ul
-            li
-              display: flex
-              align-items: center
-              justify-content: flex-start
-              list-style: none
-              background-color: #fff
-              height: 34px
-              width: auto
-              border-bottom: 1px solid rgb(209, 213, 218)
-              &:last-child
-                border-bottom: 0
-              a
-                display: flex
-                flex: 1 1 auto
-                align-items: center
-                text-decoration: none
-                padding: 7px
-                cursor: pointer
-                font-size: 14px
-                color: #1b1f23
-                &:hover
-                  color: #fff
-                  background-color: #7e1083
-      .line
-        display: flex
-        justify-content: space-between
-        align-items: center
-        width: 100%
-        height: 30px
+        border-radius: 3px
+        transition: .75s all ease
+        &:hover
+          background-color: rgba(126, 16, 131, 0.2)
         span
-          font-size: 12px
-        .sep
-          flex-grow: 1
-          height: 1px
-          background-color: #d1d5da
-      .list
-        ul
-          li
-            list-style: none
-            display: flex
-            align-items: center
-            justify-content: flex-start
-            a
-              font-size: 14px
-              display: flex
-              flex: 1 1 auto
-              align-items: center
-              text-decoration: none
-              padding: 7px
-              cursor: pointer
-              border-radius: 3px
-              &:hover
-                background-color: rgba(126, 16, 131, 0.2)
-                transition: all .75s ease
+          padding: 5px
+          font-weight: 600
+      ul
+        padding: 5px
+        li
+          margin-left: 16px
+          font-size: 14px
+          list-style: none
+          a
+            text-decoration: none 
+            color: #1b1f23
+            font-size: 12px
+            &:hover
+              border-bottom: 1px solid #1b1f23
+
+
+
 
 
 
 .profile
   display: block
-  .content
-    background-color: #fff
-    border: 1px solid rgb(209, 213, 218)
-    border-radius: 3px
-    .header
-      display: flex
-      justify-content: space-between
-      align-items: center
-      padding: 8px 16px
-      margin: -1px -1px 0 -1px
-      background-color: #f6f8fa
-      border-color: #d1d5da
-      border-style: solid
-      border-width: 1px;
-      border-top-left-radius: 3px
-      border-top-right-radius: 3px
+  background-color: #fff
+  border: none
+  border-radius: 4px
+  .header
+    display: flex
+    justify-content: space-between
+    align-items: center
+    padding: 8px 16px
+    h3
+      line-height: 1.25
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase
+  .body
+
+    padding: 8px 16px
+    .avatar
+      img
+        height: 121px
+        width: 100px
+    .info
       h3
-        line-height: 1.25
-        font-size: 14px;
-        font-weight: 600;
-      button
-        padding: 3px 10px
-        font-size: 12px
-        font-weight: 600
-        line-height: 20px
-        cursor: pointer
-        color: #fff
-        user-select: none
+        padding: 5px 0
+        font-size: 16px
+      p
+        font-size: 14px
+        line-height: 1.5
         white-space: nowrap
-        vertical-align: middle
-        background-color: #7e1083;
-        background-image: linear-gradient(-180deg, #b016b7 0%, #7e1083 90%);
-        background-repeat: repeat-x
-        background-position: -1px -1px
-        background-size: 110% 110%
-        border: 1px solid rgba(27,31,35,0.2)
-        border-radius: 0.25em
-        text-transform: none
-        overflow: visible
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    .body
-      display: flex
-      align-items: center
-      justify-content: space-between
-      padding: 8px 16px
-      .avatar
-        width: 124px
-        height: 150px
-        background-color: #7e1083
-      .info
-        padding: 0 14px
-        h3
-          margin-bottom: 10px
-        p
-          font-size: 14px
-          line-height: 24px
-          white-space: nowrap
