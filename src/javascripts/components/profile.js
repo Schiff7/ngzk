@@ -1,47 +1,60 @@
-/* /public/src/javascript/components/profile.js */
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { impureActions } from 'sagas/actions';
+import { isEqual } from 'lodash';
 
-const Profile = (props) => {
-  return (
-    <div className='profile'>
-      <div className='content'>
-        <Header />
-        <Body {...props} />
+class Profile extends Component {
+  constructor() {
+    super()
+  }
+
+  componentDidMount() {
+    const { loadProf, match: { params: { name } } } = this.props;
+    setTimeout(() => loadProf(name), 300);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { loadProf, match: { params: { name } }, prof: { status } } = nextProps;
+    if (!isEqual(this.props.match, nextProps.match)) {
+      setTimeout(() => loadProf(name), 300);
+      NProgress.set(0.6);
+    }
+    if (status === 'succeeded') setTimeout(() => NProgress.done(), 500);
+  }
+
+  render() {
+    const { prof: { info : { name, birthdate, constellation, abo, stature } } } = this.props;
+    return (
+      <div className='profile'>
+        <div className='header'>
+          <h3 className='title'>profile</h3>
+        </div>
+        <div className='body'>
+          <div className='avatar'>
+          </div>
+          <div className='info'>
+            <h3>{name}</h3>
+            <p> 
+              {birthdate}生
+              <br />
+              血液型：{abo}
+              <br />
+              星座：{constellation}
+              <br />
+              身長：{stature}
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-} 
-
-const Header = () => {
-  return (
-    <div className='header'>
-      <div className='title'><h3>Profile</h3></div>
-      <button className='hide'>WIKI</button>
-    </div>
-  );
+    );
+  }
 }
+const mapStateToProps = ({ impure: { prof } }) => ({
+  prof
+})
 
-const Body = (props) => {
-  const { prof } = props;
-  return (
-    <div className='body'>
-      <div className='avatar'>
-        <img src={`https://nyctophilia.github.io/ngzk/src/images/member/${prof.name}.jpg`} />
-      </div>
-      <div className='info'>
-        <h3>{prof.info.name}</h3>
-        <p> 
-          {prof.info.birthdate}生
-          <br />
-          血液型：{prof.info.abo}
-          <br />
-          星座：{prof.info.constellation}
-          <br />
-          身長：{prof.info.stature}
-        </p>
-      </div>
-    </div>
-  );
-}
+const mapDispatchToProps = dispatch => ({
+  loadProf: (name) => dispatch(impureActions.fetch.prof.requested(name)),
+})
 
-export default Profile;
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

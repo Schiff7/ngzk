@@ -9,9 +9,7 @@ import pureReducer from 'reducers';
 import impureReducer from 'sagas/reducers';
 import saga from 'sagas/sagas';
 import createSagaMiddleware from 'redux-saga';
-import Nav from 'containers/nav';
-import Home from 'containers/home';
-import { Blog } from 'containers';
+import App from 'containers';
 import '@/stylesheets/style.styl';
 
 const history = createBrowserHistory();
@@ -28,13 +26,7 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
-      <div className='container'>
-        <Nav />
-        <Switch>
-          <Route exact path='/' component={Home} />
-          <Route path='/blog/:name' component={Blog} />
-        </Switch>
-      </div>
+      <App />
     </Router>
   </Provider>,
   document.querySelector('#root')

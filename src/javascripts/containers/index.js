@@ -1,19 +1,16 @@
-/* /public/src/javascripts/containers/index.js */
-import React from 'react';
-import Box from './box';
-import Profile from './profile';
-import Paper from './paper';
+import React, { Component, Fragment } from 'react';
+import Blog from './blog';
+import Home from './home';
 
-export const Blog = ({match}) => {
-  return (
-    <div className='blog'>
-      <div className='left'>
-        <Profile match={match} />
-        <Box match={match} />
-      </div>
-      <div className='right'>
-        <Paper />
-      </div>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <Fragment>
+        <Blog />
+        <Home />
+      </Fragment>
+    );
+  }
 }
+
+export default App;

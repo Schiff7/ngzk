@@ -8,14 +8,14 @@ export const impureActions = createActions({
       SUCCEEDED: (prof) => ({ prof }),
       FAILED: (error) => error
     },
-    BLOG: {
-      REQUESTED: () => {},
-      SUCCEEDED: () => {},
+    ARTICLE: {
+      REQUESTED: (location) => ({ location }),
+      SUCCEEDED: (article) => ({ article }),
       FAILED: (error) => error
     },
     CONTENTS: {
-      REQUESTED: () => {},
-      SUCCEEDED: () => {},
+      REQUESTED: (name) => ({ name }),
+      SUCCEEDED: (contents) => ({ contents }),
       FAILED: (error) => error
     }
   }

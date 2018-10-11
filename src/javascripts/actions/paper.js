@@ -1,1 +1,0 @@
-/* /public/src/javascript/actions/paper.js */

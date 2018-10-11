@@ -1,7 +1,6 @@
 /* /src/javascripts/sagas/api.js */
 import axios from 'axios';
 import yaml from 'js-yaml';
-import { format } from 'utils';
 
 const HOSTNAME = 'https://nyctophilia.github.io/ngzk/src';
 
@@ -14,24 +13,26 @@ const fetchProf = async (name) => {
   }
 }
 
-const fetchBlog = async (name, date) => {
-  try {
-    const filename = '';
-    const formatDate = format(date, 'yyyy/MM');
-    const blog = await axios.get(`${HOSTNAME}/views/blog/${name}/${formatDate}/${filename}.yaml`);
-    return yaml.safeLoad(blog.data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 const fetchContents = async (name) => {
   try {
-    const contents = await axios.get(`${HOSTNAME}}/views/contents/${name}.yaml`);
-    return yaml.safeLoad(contents.data);
+    const contents = await axios.get(`${HOSTNAME}/views/contents/${name}.yaml`);
+    const raw = yaml.safeLoad(contents.data);
+    return { raw };
   } catch (error) {
     console.error(error);
   }
 }
 
-export default { fetchProf, fetchBlog, fetchContents };
+const fetchArticle = async (location) => {
+  try {
+    const article = await axios.get(`${HOSTNAME}/views/blog/${location}.yaml`);
+    const raw = yaml.safeLoad(article.data);
+    raw.content = raw.content.replace(/src="([a-zA-Z0-9_/.]+?)"/g, `src="${HOSTNAME}$1"`);
+    return raw;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+export default { fetchProf, fetchContents, fetchArticle };

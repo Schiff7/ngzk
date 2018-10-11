@@ -33,4 +33,59 @@ const prof = handleActions(
   }
 );
 
-export default combineReducers({ prof });
+
+const contents = handleActions(
+  new Map([
+    [
+      impureActions.fetch.contents.requested,
+      (state, action) => ({ ...state, status: 'pending', name: action.payload.name })
+    ],
+    [
+      impureActions.fetch.contents.succeeded,
+      (state, action) => ({ ...state, status: 'succeeded', info: action.payload.contents })
+    ],
+    [
+      impureActions.fetch.contents.failed,
+      (state, action) => ({ ...state, status: 'failed', info: null, error: action.payload.error })
+    ]
+  ]),
+  { 
+    status: 'initialized', 
+    name: '', 
+    info: {
+      raw: null,
+    }, 
+    error: null 
+  }
+);
+
+const article = handleActions(
+  new Map([
+    [
+      impureActions.fetch.article.requested,
+      (state, action) => ({ ...state, status: 'pending', location: action.payload.location})
+    ],
+    [
+      impureActions.fetch.article.succeeded,
+      (state, action) => ({ ...state, status: 'succeeded', info: action.payload.article })
+    ],
+    [
+      impureActions.fetch.article.failed,
+      (state, action) => ({ ...state, status: 'failed', info: null, error: action.payload.error })
+    ]
+  ]),
+  { 
+    status: 'initialized', 
+    location: '', 
+    info: { 
+      url: '', 
+      title: '',
+      date: '',
+      author: '',
+      content: '',
+    }, 
+    error: null 
+  }
+);
+
+export default combineReducers({ prof, contents, article });

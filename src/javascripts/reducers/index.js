@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux';
-import nav from './nav';
-import box from './box';
+import home from './home';
 
 export default combineReducers({ 
-  nav,
-  box,
+  home
 });
