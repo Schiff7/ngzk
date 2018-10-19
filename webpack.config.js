@@ -14,6 +14,7 @@ module.exports = {
       'reducers': `${__dirname}/src/javascripts/reducers/`,
       'components': `${__dirname}/src/javascripts/components/`,
       'containers': `${__dirname}/src/javascripts/containers/`,
+      'sagas': `${__dirname}/src/javascripts/sagas`,
       'utils': `${__dirname}/src/javascripts/utils/`,
     }
   },
@@ -27,8 +28,7 @@ module.exports = {
         }
       },
       {
-        test: /\.styl$/,
-        include: [path.resolve(__dirname, 'src/stylesheets')],
+        test: /\.(styl|css)$/,
         use: [ 
           { loader: 'style-loader' },
           { loader: 'css-loader' },
@@ -53,6 +53,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
+    port: 3000,
     contentBase: './public',
     hot: true,
     historyApiFallback: true, // react-router
