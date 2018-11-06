@@ -12,52 +12,54 @@ class Home extends Component {
 
   componentDidMount() {
     document.addEventListener('touchmove', function (e) {
-        e.preventDefault()
+      e.preventDefault()
     })
-    let c = document.getElementsByTagName('canvas')[0],
-        x = c.getContext('2d'),
-        pr = window.devicePixelRatio || 1,
-        w = window.innerWidth,
-        h = window.innerHeight,
-        f = 120,
-        q,
-        m = Math,
-        r = 0,
-        u = m.PI*2,
-        v = m.cos,
-        z = m.random
-    c.width = w*pr
-    c.height = h*pr
-    x.scale(pr, pr)
-    x.globalAlpha = 0.6
+    const canvas = document.getElementsByTagName('canvas')[0];
+    const context = canvas.getContext('2d');
+    const pixelRatio = window.devicePixelRatio || 1;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const stepLength = 90;
 
-    function i(){
-        x.clearRect(0, 0, w, h)
-        q=[{ x: 0, y: h * .7 + f },{ x: 0, y: h * .7 - f }]
-        while(q[1].x < w + f) d(q[0], q[1])
+    let functor = 0;
+
+    canvas.width = width * pixelRatio;
+    canvas.height = height * pixelRatio;
+    context.scale(pixelRatio, pixelRatio);
+    context.globalAlpha = 0.6;
+
+    const main = () => {
+      context.clearRect(0, 0, width, height); 
+      let [ point, _point ] = [ { x: 0, y: height * .7 + stepLength }, { x: 0, y: height * .7 - stepLength } ];
+      while ( _point.x < width + stepLength ) [ point, _point ] = draw(point, _point);
     }
-    function d(i,j){   
-        x.beginPath()
-        x.moveTo(i.x, i.y)
-        x.lineTo(j.x, j.y)
-        let k = j.x + (z() * 2 - 0.25) * f,
-            n = y(j.y)
-        x.lineTo(k, n)
-        x.closePath()
-        r -= u / -50
-        // x.fillStyle = '#'+(v(r)*127+128<<16 | v(r+u/3)*127+128<<8 | v(r+u/3*2)*127+128).toString(16)
-        x.fillStyle = '#7e1083'
-        x.fill()
-        q[0] = q[1]
-        q[1] = { x: k, y: n }
+
+    const draw = (point, _point) => {
+      context.beginPath();
+      context.moveTo(point.x, point.y);
+      context.lineTo(_point.x, _point.y);
+      const { x, y } = nextPoint(_point);
+      context.lineTo(x, y);
+      context.closePath();
+      functor += Math.PI * 2 / 50;
+      // context.fillStyle = '#7e1083';
+      context.fillStyle = '#'+ ( 
+        Math.cos(functor) * 127 + 128 << 16 | 
+        Math.cos(functor + Math.PI * 2 / 3) * 127 + 128 << 8 | 
+        Math.cos(functor + Math.PI * 2 / 3 * 2 ) * 127 + 128 
+      ).toString(16);
+      context.fill();
+      return [ _point, { x, y } ];
     }
-    function y(p){
-        let t = p + ( z() * 2 - 1.1) * f
-        return ( t > h / 2 || t < 0 ) ? y(p) : t
+    const nextPoint = (point) => {
+      const { x, y } = point;
+      const _y = y + ( Math.random() * 2 - 1.1 ) * stepLength;
+      const _x = x + ( Math.random() * 2 - 0.25 ) * stepLength;
+      return ( _y > height || _y < 0 ) ? nextPoint(point) : { x: _x, y: _y };
     }
-    // document.onclick = i
-    // document.ontouchstart = i
-    i()
+    document.onclick = main;
+    document.ontouchstart = main;
+    main();
   }
 
   render() {
