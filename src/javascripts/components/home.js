@@ -1,9 +1,8 @@
-/* /public/src/javascript/components/home.js */
+// /src/javascript/components/home.js
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { homeActions } from 'actions/home';
-import '@/stylesheets/home.styl';
 
 class Home extends Component {
   constructor() {

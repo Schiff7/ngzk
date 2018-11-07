@@ -68,7 +68,7 @@ class Utils {
    */
   static mkdirs(dirpath) {
     if (!fs.existsSync(path.dirname(dirpath)))
-      Utils.mkdirs(path.dirname(dirpath));
+      this.mkdirs(path.dirname(dirpath));
     fs.mkdirSync(dirpath);
   }
 
@@ -82,7 +82,7 @@ class Utils {
     if (fs.statSync(dirpath).isDirectory()) {
       const dirs = fs.readdirSync(dirpath);
       dirs.forEach(dir => {
-        Utils.rmdirs(path.resolve(dirpath, dir));
+        this.rmdirs(path.resolve(dirpath, dir));
       });
       fs.rmdirSync(dirpath);
     } else {
@@ -112,7 +112,7 @@ class Utils {
   static foldback(p, level) {
     if (level === 0)
       return path.resolve(p);
-    return Utils.foldback(path.dirname(p), level - 1);
+    return this.foldback(path.dirname(p), level - 1);
   }
 
 
@@ -132,8 +132,8 @@ class Utils {
         break; 
       } catch (error) {
         // ...
-        console.log('requested error, will try again 5s later.')
-        await Utils.sleep(5000);
+        // console.log('\t\trequested error, will try again 5s later.')
+        await this.sleep(5000);
       }
     }
     return result;
@@ -167,7 +167,7 @@ class Utils {
     // return Promise.all(promises);
     const results = [];
     for (let executor of executors) {
-      if (ms) await Utils.sleep(ms);
+      if (ms) await this.sleep(ms);
       const result = await executor();
       results.push(result);
     }
@@ -187,7 +187,7 @@ class Utils {
       dirs.forEach(dir => {
         const fullPath = path.resolve(dirpath, dir);
         if (fs.statSync(fullPath).isDirectory()) {
-          o[dir] = Utils.read(fullPath);
+          o[dir] = this.read(fullPath);
         } else {
             const doc = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8'));
             o[dir] = doc.title; 
@@ -242,12 +242,12 @@ class Machine {
   async connect(url) {
     const { options, purity, deriveLoadPath, deriveImageMap } = this.conf;
     // extract
-    console.log(`\t connect ${url}.`);
+    // console.log(`\t connect ${url}.`);
     const o = await this.extract(url, options);
-    console.log('\t\t extracted.');
+    // console.log('\t\t extracted.');
     // handle images
     const images = await this.handleImages(o, deriveImageMap);
-    console.log('\t\t images handled.');
+    // console.log('\t\t images handled.');
     // handle blog
     const savepath = deriveLoadPath(o);
     const dir = path.dirname(savepath);
@@ -266,7 +266,7 @@ class Machine {
         log('error', Utils.action('write_view', { url }));
       }
     );
-    console.log('\t\t wrote.');
+    // console.log('\t\t wrote.');
     // ...
     return Utils.action('connect', { connect: { images, views } });
   }
@@ -354,23 +354,23 @@ const m = new Machine({
       const links = doc.querySelector('#daytable').querySelectorAll('a');
       const connects = [...links].map((link) => () => connect(link.href));
       const feedback = await Utils.all(connects, 1500);
-      log('info', feedback);
+      // log('info', feedback);
       const n = doc.querySelector('.next');
       // if (!!n) next(n.href);
       if (!!n) return n.href;
     };
     let k = entry;
     while(k) {
-      console.log(`next ${k}`);
+      // console.log(`next ${k}`);
+      log(`next ${k}`);
       k = await next(k);
     }
     return;
   },
   deriveLoadPath: (o) => {
-    const id = o.title.firstChild.href.search(/\d+(?=\.php)/);
     const date = new Date(o.date.textContent.slice(0, 16));
     const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0].replace(/\./, '_');
-    const savepath = `views/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}${id}.yaml`;
+    const savepath = `views/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}.yaml`;
     return path.resolve(Utils.foldback(__dirname, 2), savepath);
   },
   deriveImageMap: (o) => {
@@ -414,9 +414,8 @@ const m = new Machine({
 });
 
 
-// m.connect('http://blog.nogizaka46.com/yumi.wakatsuki/?d=20120727');
-// m.connect('http://blog.nogizaka46.com/yumi.wakatsuki/?d=20120830');
-m.run();
+
+// m.run();
 
 // function createContents(name) {
 //   const from = path.resolve(Utils.foldback(__dirname, 2), 'views/blog');
@@ -429,3 +428,53 @@ m.run();
 // createContents('yuuki_yoda');
 // createContents('mizuki_yamashita');
 // createContents('hazuki_mukai');
+
+function breakfast() {
+  const names = [
+    'manatsu akimoto',
+    'erika ikuta',
+    'karin itou',
+    'jyunna itou',
+    'riria itou',
+    'sayuri inoue',
+    'renka iwamoto',
+    'minami umezawa',
+    'misa etou',
+    'momoko oozono',
+    'hina kawago',
+    'hinako kitano',
+    'shiori kubo',
+    'asuka saitou',
+    'yuuri saitou',
+    'tamami sakaguchi',
+    'reika sakurai',
+    'kotoko sasaki',
+    'kaede satou',
+    'mai shiraishi',
+    'mai shinuchi',
+    'ayane suzuki',
+    'kazumi takayama',
+    'ranze terada',
+    'kana nakada',
+    'reno nakamura',
+    'nanase nishino',
+    'ami noujyou',
+    'hina higuchi',
+    'minami hoshino',
+    'miona hori',
+    'sayuri matsumura',
+    'hazuki mukai',
+    'rena yamazaki',
+    'mizuki yamashita',
+    'ayanochristie yoshida',
+    'yuuki yoda',
+    'yumi wakatsuki',
+    'miria watanabe',
+    'maaya wada',
+  ];
+  const date = Utils.format(new Date(), 'yyyyMMdd');
+  const urls = names.map(name => `http://blog.nogizaka46.com/${name.replace(/\s/, '.')}/?d=${date}`);
+  console.log(urls);
+}
+
+breakfast();
