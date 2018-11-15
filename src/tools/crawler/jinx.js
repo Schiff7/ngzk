@@ -17,6 +17,7 @@ log4js.configure({
 const logger = log4js.getLogger('jinx');
 
 const log = (level, msg) => logger[level](msg);
+const environment = 'ENV';
 
 
 // ------------------------- UTILS
@@ -132,7 +133,7 @@ class Utils {
         break; 
       } catch (error) {
         // ...
-        // console.log('\t\trequested error, will try again 5s later.')
+        if ( environment === 'DEV' ) console.log('\t\trequested error, will try again 5s later.')
         await this.sleep(5000);
       }
     }
@@ -216,7 +217,6 @@ class Machine {
       deriveImageMap: undefined,
       deriveLoadPath: undefined,
     }
-    this.records = {};
     Object.assign(this.conf, conf);
     // bind this.
     this.extract = this.extract.bind(this);
@@ -242,12 +242,12 @@ class Machine {
   async connect(url) {
     const { options, purity, deriveLoadPath, deriveImageMap } = this.conf;
     // extract
-    // console.log(`\t connect ${url}.`);
+    if ( environment === 'DEV' ) console.log(`\t connect ${url}.`);
     const o = await this.extract(url, options);
-    // console.log('\t\t extracted.');
+    if ( environment === 'DEV' ) console.log('\t\t extracted.');
     // handle images
     const images = await this.handleImages(o, deriveImageMap);
-    // console.log('\t\t images handled.');
+    if ( environment === 'DEV' ) console.log('\t\t images handled.');
     // handle blog
     const savepath = deriveLoadPath(o);
     const dir = path.dirname(savepath);
@@ -266,7 +266,7 @@ class Machine {
         log('error', Utils.action('write_view', { url }));
       }
     );
-    // console.log('\t\t wrote.');
+    if ( environment === 'DEV' ) console.log('\t\t wrote.');
     // ...
     return Utils.action('connect', { connect: { images, views } });
   }
@@ -334,13 +334,14 @@ class Machine {
       requests.push(request);
       Utils.resetAttributes(image, { src });
     });
-    const records = await Utils.all(requests, 1000);
+    const records = await Utils.all(requests, 100);
     return records;
   }
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/yumi.wakatsuki/?d=201412',
+  environment: 'DEV',
+  entry: 'http://blog.nogizaka46.com/ami.noujo/?d=201111',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -353,7 +354,7 @@ const m = new Machine({
       const doc = JSDOM.fragment(response.data);
       const links = doc.querySelector('#daytable').querySelectorAll('a');
       const connects = [...links].map((link) => () => connect(link.href));
-      const feedback = await Utils.all(connects, 1500);
+      const feedback = await Utils.all(connects, 100);
       // log('info', feedback);
       const n = doc.querySelector('.next');
       // if (!!n) next(n.href);
@@ -361,8 +362,8 @@ const m = new Machine({
     };
     let k = entry;
     while(k) {
-      // console.log(`next ${k}`);
-      log(`next ${k}`);
+      if ( environment === 'DEV' ) console.log(`next ${k}`);
+      // log('info', `next ${k}`);
       k = await next(k);
     }
     return;
@@ -415,7 +416,7 @@ const m = new Machine({
 
 
 
-// m.run();
+m.run();
 
 // function createContents(name) {
 //   const from = path.resolve(Utils.foldback(__dirname, 2), 'views/blog');
@@ -429,52 +430,52 @@ const m = new Machine({
 // createContents('mizuki_yamashita');
 // createContents('hazuki_mukai');
 
-function breakfast() {
-  const names = [
-    'manatsu akimoto',
-    'erika ikuta',
-    'karin itou',
-    'jyunna itou',
-    'riria itou',
-    'sayuri inoue',
-    'renka iwamoto',
-    'minami umezawa',
-    'misa etou',
-    'momoko oozono',
-    'hina kawago',
-    'hinako kitano',
-    'shiori kubo',
-    'asuka saitou',
-    'yuuri saitou',
-    'tamami sakaguchi',
-    'reika sakurai',
-    'kotoko sasaki',
-    'kaede satou',
-    'mai shiraishi',
-    'mai shinuchi',
-    'ayane suzuki',
-    'kazumi takayama',
-    'ranze terada',
-    'kana nakada',
-    'reno nakamura',
-    'nanase nishino',
-    'ami noujyou',
-    'hina higuchi',
-    'minami hoshino',
-    'miona hori',
-    'sayuri matsumura',
-    'hazuki mukai',
-    'rena yamazaki',
-    'mizuki yamashita',
-    'ayanochristie yoshida',
-    'yuuki yoda',
-    'yumi wakatsuki',
-    'miria watanabe',
-    'maaya wada',
-  ];
-  const date = Utils.format(new Date(), 'yyyyMMdd');
-  const urls = names.map(name => `http://blog.nogizaka46.com/${name.replace(/\s/, '.')}/?d=${date}`);
-  console.log(urls);
-}
+// function breakfast() {
+//   const names = [
+//     'manatsu akimoto',
+//     'erika ikuta',
+//     'karin itou',
+//     'jyunna itou',
+//     'riria itou',
+//     'sayuri inoue',
+//     'renka iwamoto',
+//     'minami umezawa',
+//     'misa etou',
+//     'momoko oozono',
+//     'hina kawago',
+//     'hinako kitano',
+//     'shiori kubo',
+//     'asuka saitou',
+//     'yuuri saitou',
+//     'tamami sakaguchi',
+//     'reika sakurai',
+//     'kotoko sasaki',
+//     'kaede satou',
+//     'mai shiraishi',
+//     'mai shinuchi',
+//     'ayane suzuki',
+//     'kazumi takayama',
+//     'ranze terada',
+//     'kana nakada',
+//     'reno nakamura',
+//     'nanase nishino',
+//     'ami noujyou',
+//     'hina higuchi',
+//     'minami hoshino',
+//     'miona hori',
+//     'sayuri matsumura',
+//     'hazuki mukai',
+//     'rena yamazaki',
+//     'mizuki yamashita',
+//     'ayanochristie yoshida',
+//     'yuuki yoda',
+//     'yumi wakatsuki',
+//     'miria watanabe',
+//     'maaya wada',
+//   ];
+//   const date = Utils.format(new Date(), 'yyyyMMdd');
+//   const urls = names.map(name => `http://blog.nogizaka46.com/${name.replace(/\s/, '.')}/?d=${date}`);
+//   console.log(urls);
+// }
 
-breakfast();
+// breakfast();
