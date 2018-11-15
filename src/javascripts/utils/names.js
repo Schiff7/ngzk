@@ -29,7 +29,7 @@ const names = [
   { name: '中田 花奈', hiragana : 'なかだ かな', roma: 'kana nakada', nickname: [] },
   { name: '中村 麗乃', hiragana : 'なかむら れの', roma: 'reno nakamura', nickname: [] },
   { name: '西野 七瀬', hiragana : 'にしの ななせ', roma: 'nanase nishino', nickname: ['7'] },
-  { name: '能條 愛未', hiragana : 'のうじょう あみ', roma: 'ami noujyou', nickname: ['脚','Johnson'] },
+  { name: '能條 愛未', hiragana : 'のうじょう あみ', roma: 'ami noujo', nickname: ['脚','Johnson'] },
   { name: '樋口 日奈', hiragana : 'ひぐち ひな', roma: 'hina higuchi', nickname: [] },
   { name: '星野 みなみ', hiragana : 'ほしの みなみ', roma: 'minami hoshino', nickname: ['小南','18'] },
   { name: '堀 未央奈', hiragana : 'ほり みおな', roma: 'miona hori', nickname: ['猴莉'] },
