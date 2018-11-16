@@ -17,8 +17,9 @@ log4js.configure({
 const logger = log4js.getLogger('jinx');
 
 const log = (level, msg) => logger[level](msg);
-const environment = 'ENV';
+const environment = 'DEV';
 
+if ( environment === 'DEV' ) console.log(environment);
 
 // ------------------------- UTILS
 
@@ -123,17 +124,25 @@ class Utils {
    * @param {*} info 
    * @param {*} times 
    */
-  static async retry (func) {
+  static async retry (func, error_callback, max_times) {
     let result = null;
+    let i = 0;
     while(true) {
       try {
         result = await Promise.race([func(), new Promise((resolve, reject) => {
-          setTimeout(() => reject(new Error('timeout')), 10000);
+          setTimeout(() => { 
+            i++;
+            reject(new Error('timeout'));
+          }, 10000);
         })]);
         break; 
       } catch (error) {
         // ...
         if ( environment === 'DEV' ) console.log('\t\trequested error, will try again 5s later.')
+        if ( !(i < max_times) ) { 
+          error_callback();
+          break; 
+        }
         await this.sleep(5000);
       }
     }
@@ -277,7 +286,7 @@ class Machine {
    * @param {*} options 
    */
   async extract(url, options) {
-    const response = await Utils.retry(() => axios({ url, timeout: 5000 }));
+    const response = await Utils.retry(() => axios({ url, timeout: 5000 }), url);
     const doc = JSDOM.fragment(response.data);
     const result = { url };
     for (let key of Object.keys(options)) {
@@ -292,7 +301,8 @@ class Machine {
    * @param {*} path 
    */
   async writeImage(url, path) {
-    const response = await Utils.retry(() => axios({ url, timeout: 5000, responseType: 'stream' }));
+    const response = await Utils.retry(
+      () => axios({ url, timeout: 5000, responseType: 'stream' }));
     // ...
     const feedback = await new Promise((resolve, reject) => {
       response.data.pipe(fs.createWriteStream(path), (error) => {
@@ -340,8 +350,7 @@ class Machine {
 }
 
 const m = new Machine({
-  environment: 'DEV',
-  entry: 'http://blog.nogizaka46.com/ami.noujo/?d=201111',
+  entry: 'http://blog.nogizaka46.com/ami.noujo/?d=201611',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -415,8 +424,8 @@ const m = new Machine({
 });
 
 
-
 m.run();
+//m.connect('http://blog.nogizaka46.com/ami.noujo/?d=20130615')
 
 // function createContents(name) {
 //   const from = path.resolve(Utils.foldback(__dirname, 2), 'views/blog');
