@@ -7,17 +7,30 @@ const { JSDOM } = require('jsdom');
 // Log configuration.
 log4js.configure({
   appenders: {
-    jinx: { type: 'file', filename: path.resolve(__dirname, 'jinx.log') }
+    jinx: { type: 'file', filename: path.resolve(__dirname, 'jinx.log') },
+    jinx_error : { type: 'file', filename: path.resolve(__dirname, 'jinx_error.log'), level: 'error' },
   },
   categories: {
-    default: { appenders: ['jinx'], level: 'info' }
+    default: { appenders: ['jinx', 'jinx_error'], level: 'info' }
   }
 });
 
 const logger = log4js.getLogger('jinx');
 
+// -------------------------- GLOBAL
+
 const log = (level, msg) => logger[level](msg);
 const environment = 'DEV';
+const allMember = [
+  'manatsu akimoto', 'erika ikuta', 'karin itou', 'jyunna itou', 'riria itou',
+  'sayuri inoue', 'renka iwamoto', 'minami umezawa', 'misa etou', 'momoko oozono',
+  'hina kawago', 'hinako kitano', 'shiori kubo', 'asuka saitou', 'yuuri saitou',
+  'tamami sakaguchi', 'reika sakurai', 'kotoko sasaki', 'kaede satou', 'mai shiraishi',
+  'mai shinuchi', 'ayane suzuki', 'kazumi takayama', 'ranze terada', 'kana nakada',
+  'reno nakamura', 'nanase nishino', 'ami noujyou', 'hina higuchi', 'minami hoshino',
+  'miona hori', 'sayuri matsumura', 'hazuki mukai', 'rena yamazaki', 'mizuki yamashita',
+  'ayanochristie yoshida', 'yuuki yoda', 'yumi wakatsuki', 'miria watanabe', 'maaya wada',
+];
 
 if ( environment === 'DEV' ) console.log(environment);
 
@@ -120,16 +133,16 @@ class Utils {
 
   /**
    * 
-   * @param {*} func 
-   * @param {*} info 
-   * @param {*} times 
+   * @param {*} func the function you want to reexecute when faild ( need to throw a exception ). 
+   * @param {*} error_callback will execute when retry times reach the specified max times. 
+   * @param {*} max_times ...
    */
   static async retry (func, error_callback, max_times) {
     let result = null;
     let i = 0;
     while(true) {
       try {
-        result = await Promise.race([func(), new Promise((resolve, reject) => {
+        result = await Promise.race([func(), new Promise((_, reject) => {
           setTimeout(() => { 
             i++;
             reject(new Error('timeout'));
@@ -139,9 +152,8 @@ class Utils {
       } catch (error) {
         // ...
         if ( environment === 'DEV' ) console.log('\t\trequested error, will try again 5s later.')
-        if ( !(i < max_times) ) { 
+        if ( ( error_callback && max_times ) && !(i < max_times) ) { 
           error_callback();
-          break; 
         }
         await this.sleep(5000);
       }
@@ -173,8 +185,6 @@ class Utils {
    * @param {*} executors 
    */
   static async all(executors, ms) {
-    // const promises = executors.map(executor => executor());
-    // return Promise.all(promises);
     const results = [];
     for (let executor of executors) {
       if (ms) await this.sleep(ms);
@@ -272,7 +282,7 @@ class Machine {
       (i) => i,
       (error) => {
         // log('error', error);
-        log('error', Utils.action('write_view', { url }));
+        log('error', Utils.action('write_view', { url, error }));
       }
     );
     if ( environment === 'DEV' ) console.log('\t\t wrote.');
@@ -286,7 +296,9 @@ class Machine {
    * @param {*} options 
    */
   async extract(url, options) {
-    const response = await Utils.retry(() => axios({ url, timeout: 5000 }), url);
+    const response = await Utils.retry(
+      () => axios({ url, timeout: 5000 }), 
+      () => { throw new Error(Utils.action('extract', url)) }, 7 );
     const doc = JSDOM.fragment(response.data);
     const result = { url };
     for (let key of Object.keys(options)) {
@@ -302,7 +314,8 @@ class Machine {
    */
   async writeImage(url, path) {
     const response = await Utils.retry(
-      () => axios({ url, timeout: 5000, responseType: 'stream' }));
+      () => axios({ url, timeout: 5000, responseType: 'stream' }),
+      () => { throw new Error(Utils.action('request_image', url)) }, 3 );
     // ...
     const feedback = await new Promise((resolve, reject) => {
       response.data.pipe(fs.createWriteStream(path), (error) => {
@@ -313,7 +326,7 @@ class Machine {
       (i) => i,
       (error) => {
         // log('error', error);
-        log('error', Utils.action('write_image', { url }));
+        log('error', Utils.action('write_image', { url, error }));
       }
     )
     
@@ -350,7 +363,7 @@ class Machine {
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/ami.noujo/?d=201611',
+  entry: 'http://blog.nogizaka46.com/yumi.wakatsuki/?d=201810',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -440,50 +453,8 @@ m.run();
 // createContents('hazuki_mukai');
 
 // function breakfast() {
-//   const names = [
-//     'manatsu akimoto',
-//     'erika ikuta',
-//     'karin itou',
-//     'jyunna itou',
-//     'riria itou',
-//     'sayuri inoue',
-//     'renka iwamoto',
-//     'minami umezawa',
-//     'misa etou',
-//     'momoko oozono',
-//     'hina kawago',
-//     'hinako kitano',
-//     'shiori kubo',
-//     'asuka saitou',
-//     'yuuri saitou',
-//     'tamami sakaguchi',
-//     'reika sakurai',
-//     'kotoko sasaki',
-//     'kaede satou',
-//     'mai shiraishi',
-//     'mai shinuchi',
-//     'ayane suzuki',
-//     'kazumi takayama',
-//     'ranze terada',
-//     'kana nakada',
-//     'reno nakamura',
-//     'nanase nishino',
-//     'ami noujyou',
-//     'hina higuchi',
-//     'minami hoshino',
-//     'miona hori',
-//     'sayuri matsumura',
-//     'hazuki mukai',
-//     'rena yamazaki',
-//     'mizuki yamashita',
-//     'ayanochristie yoshida',
-//     'yuuki yoda',
-//     'yumi wakatsuki',
-//     'miria watanabe',
-//     'maaya wada',
-//   ];
 //   const date = Utils.format(new Date(), 'yyyyMMdd');
-//   const urls = names.map(name => `http://blog.nogizaka46.com/${name.replace(/\s/, '.')}/?d=${date}`);
+//   const urls = allMember.map(name => `http://blog.nogizaka46.com/${name.replace(/\s/, '.')}/?d=${date}`);
 //   console.log(urls);
 // }
 

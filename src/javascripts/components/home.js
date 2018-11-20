@@ -56,9 +56,9 @@ class Home extends Component {
       const _x = x + ( Math.random() * 2 - 0.25 ) * stepLength;
       return ( _y > height || _y < 0 ) ? nextPoint(point) : { x: _x, y: _y };
     }
-    document.onclick = main;
-    document.ontouchstart = main;
-    main();
+    // document.onclick = main;
+    // document.ontouchstart = main;
+    // main();
   }
 
   render() {

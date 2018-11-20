@@ -24,8 +24,23 @@ const hint = handleActions(
         );
       }
     ],
+    [
+      homeActions.home.search.current.select,
+      (state, action) => {
+        const { payload: { keyCode } } = action;
+        const { current } = state;
+        switch (keyCode) {
+          case 38:
+            return { current: current - 1, ...state };
+          case 40:
+            return { current: current + 1, ...state };
+          default:
+            return state;
+        }
+      }
+    ]
   ]),
-  { value: '', list: [], visible: 'hide' },
+  { value: '', list: [], visible: 'hide', current: -1 },
 );
 
 

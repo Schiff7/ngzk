@@ -11,7 +11,12 @@ export const homeActions = createActions({
       CACHE: {
         PUSH: (value) => ({ value }),
         CLEAR: undefined
+      },
+      CURRENT: {
+        SELECT: (keyCode) => ({ keyCode }),
+        RESET: undefined
       }
+      
     }
   }
 }, { namespace: '_' })
