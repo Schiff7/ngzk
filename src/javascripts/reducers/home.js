@@ -14,33 +14,39 @@ const hint = handleActions(
     ],
     [
       homeActions.home.search.value.set,
-      (_, action) => {
+      (state, action) => {
         const { payload: { value } } = action;
         const list = utils.matches(value).slice(0, 3);
         return (
           list.length === 0
-          ? { value, list: [], visible: 'hide' }
-          : { value, list, visible:'show-block' }
+          ? { ...state, value, list: [], visible: 'hide' }
+          : { ...state, value, list, visible:'show-block' }
         );
       }
     ],
     [
-      homeActions.home.search.current.select,
+      homeActions.home.search.current.up,
+      (state, _) => {
+        const { current, list } = state;
+        return { ...state, current: current === 0 ? list.length - 1 : current - 1 };
+      }
+    ],
+    [
+      homeActions.home.search.current.down,
+      (state, _) => {
+        const { current, list } = state;
+        return { ...state, current: current === list.length - 1 ? 0 : current + 1 };
+      }
+    ],
+    [
+      homeActions.home.search.current.set,
       (state, action) => {
-        const { payload: { keyCode } } = action;
-        const { current } = state;
-        switch (keyCode) {
-          case 38:
-            return { current: current - 1, ...state };
-          case 40:
-            return { current: current + 1, ...state };
-          default:
-            return state;
-        }
+        const { payload: { value } } = action;
+        return { ...state, current: value };
       }
     ]
   ]),
-  { value: '', list: [], visible: 'hide', current: -1 },
+  { value: '', list: [], visible: 'hide', current: 0 },
 );
 
 

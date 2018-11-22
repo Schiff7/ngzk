@@ -101,16 +101,16 @@ section
           justify-content: flex-start
           list-style: none
           height: 35px
+          &.active:before
+            position: absolute
+            content: '\3E'
+            left: -10px
           a
             position: relative
             padding: 5px
             flex: 1 1 auto
             text-decoration: none 
             color: #1b1f23
-            &:hover:before
-              position: absolute
-              content: '\3E'
-              left: -10px
 
 .grid-wrapper
   width: 100%

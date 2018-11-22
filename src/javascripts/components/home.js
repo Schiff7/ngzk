@@ -77,7 +77,7 @@ class Home extends Component {
         <section>
           <div className='search-wrapper'>
             <canvas />
-            <Search />
+            <Search history={this.props.history} />
           </div>
         </section>
         <section>
@@ -101,11 +101,31 @@ const mapDispatchToProps = dispatch => ({
     : homeActions.home.search.value.set(value)
   ),
   cacheInput: (value) => dispatch(homeActions.home.search.cache.push(value)),
+  moveUpCurrent: () => dispatch(homeActions.home.search.current.up()),
+  moveDownCurrent: () => dispatch(homeActions.home.search.current.down()),
+  setCurrent: (value) => dispatch(homeActions.home.search.current.set(value)),
 })
 
 export const Search = connect(mapStateToProps, mapDispatchToProps)((props) => {
-  const { hint, handleInput } = props;
+  const { history, hint, handleInput, moveUpCurrent, moveDownCurrent, setCurrent } = props;
+  const item = hint.list.length === 0 ? { name: '', roma: '' } : hint['list'][hint.current]['info'];
   const _handleInput = (e) => handleInput(e.target.value);
+  const _handlekeyDown = (e) =>{ 
+    switch (e.keyCode) { 
+      case 38:
+        moveUpCurrent(); break;
+      case 40:
+        moveDownCurrent(); break;
+      case 13:
+        handleInput(item.name);
+        handleInput();
+        setCurrent(0);
+        history.push({ pathname: `/blog/${item.roma.replace(/\s/, '_')}` }); 
+        break;
+      default:
+        break;
+    }
+  }
   return (
     <div className='search'>
       <input 
@@ -115,13 +135,15 @@ export const Search = connect(mapStateToProps, mapDispatchToProps)((props) => {
         onFocus={_handleInput}
         onBlur={() => setTimeout(handleInput, 150)}
         value={hint.value} 
+        onKeyDown={hint.visible ? _handlekeyDown : () => {}}
       />
       <div className={`data-list ${hint.visible}`}>
         <ul>
           {hint.list.map(({ info }, index) => 
-            <li key={index}>
+            <li className={index === hint.current ? 'active' : '_'} key={index}>
               <Link 
                 onClick={() => handleInput(info.name)}
+                onMouseEnter={() => setCurrent(index)}
                 to={`/blog/${info.roma.replace(/\s/, '_')}`}
                 children={`${info.name} (${info.roma})`}
               />

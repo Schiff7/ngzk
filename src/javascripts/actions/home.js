@@ -13,7 +13,9 @@ export const homeActions = createActions({
         CLEAR: undefined
       },
       CURRENT: {
-        SELECT: (keyCode) => ({ keyCode }),
+        UP: undefined,
+        DOWN: undefined,
+        SET: (value) => ({ value }),
         RESET: undefined
       }
       
