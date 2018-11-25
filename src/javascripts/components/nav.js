@@ -3,14 +3,14 @@ import { NavLink } from 'react-router-dom';
 import { Search } from './home';
 
 class Nav extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
 
   render() {
     return (
       <nav className='nav'>
-        <Search />
+        <Search history={this.props.history} />
         <div className='menu'>
           <NavLink to='/'>home</NavLink>
           <span>•</span>

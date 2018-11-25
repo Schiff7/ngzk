@@ -4,8 +4,8 @@ import { impureActions } from 'sagas/actions';
 import { isEqual } from 'lodash';
 
 class Article extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props);
   }
 
   componentDidMount() {
@@ -22,18 +22,32 @@ class Article extends Component {
     if (status === 'succeeded') setTimeout(() => NProgress.done(), 500);
   }
 
+  createInput({ target }) {
+    if ( !['editing', 'original', 'translation'].includes(target.className) && !/^\s*$/.test(target.textContent) ) {
+      const div = document.createElement('div');
+      const input = document.createElement('input');
+      target.className = 'original';
+      div.className = 'editing';
+      input.className = 'translation';
+      div.append(input);
+      target.replaceWith(div);
+      input.parentNode.insertBefore(target, input);
+    }
+  }
+
   render() {
     const { article: { info: { title, content } } } = this.props;
     return (
       <div className='article'>
         <div>
           <h3>{title}</h3>
-          <div className='text' dangerouslySetInnerHTML={{ __html: content }} ></div>
+          <div className='text' onClick={this.createInput} dangerouslySetInnerHTML={{ __html: content }} ></div>
         </div>
       </div>
     );
   }
 }
+
 const mapStateToProps = ({ impure: { article } }) => ({
   article
 })

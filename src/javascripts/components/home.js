@@ -117,9 +117,10 @@ export const Search = connect(mapStateToProps, mapDispatchToProps)((props) => {
       case 40:
         moveDownCurrent(); break;
       case 13:
+      setCurrent(0);
         handleInput(item.name);
         handleInput();
-        setCurrent(0);
+        
         history.push({ pathname: `/blog/${item.roma.replace(/\s/, '_')}` }); 
         break;
       default:
@@ -134,9 +135,10 @@ export const Search = connect(mapStateToProps, mapDispatchToProps)((props) => {
         onChange={_handleInput} 
         onFocus={_handleInput}
         onBlur={() => setTimeout(handleInput, 150)}
-        value={hint.value} 
         onKeyDown={hint.visible ? _handlekeyDown : () => {}}
+        value={hint.value} 
       />
+      <div className='under-line'></div>
       <div className={`data-list ${hint.visible}`}>
         <ul>
           {hint.list.map(({ info }, index) => 

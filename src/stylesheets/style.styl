@@ -91,8 +91,16 @@ section
       padding: 5px
       background: none
       color: #1b1f23
-      &:focus
-        border-bottom: 1px solid #1b1f23
+      &:focus + .under-line
+        width: 100%
+    .under-line
+      position: absolute
+      left: 0
+      bottom: 0
+      width: 0
+      height: 1px
+      background-color: #333
+      transition: .45s all ease
     .data-list
       ul
         li
@@ -152,19 +160,21 @@ section
   font-size: 14px;
   .menu
     a
-      text-decoration: none;
-      color: #666;
-      letter-spacing: 2px;
+      position: relative
+      padding: 3px 0
+      text-decoration: none
+      color: #666
+      letter-spacing: 2px
     .selected
       border-bottom: 1px solid #7e1083
     span
-      padding: 4px 12px;
-      color: #cdcdcd;
+      padding: 4px 12px
+      color: #cdcdcd
   .search
     position: relative
     border: none
     width: 300px
-    height: 35px
+    height: 26px
     input
       border: none 
       outline: none
@@ -172,8 +182,16 @@ section
       padding: 5px
       background: none
       color: #1b1f23
-      &:focus
-        border-bottom: 1px solid #1b1f23
+      &:focus + .under-line
+        width: 100%
+    .under-line
+      position: absolute
+      left: 0
+      bottom: 0
+      width: 0
+      height: 1px
+      background-color: #333
+      transition: .45s all ease
     .data-list
       ul
         li
@@ -181,16 +199,16 @@ section
           align-items: center
           justify-content: flex-start
           list-style: none
+          &.active:before
+            position: absolute
+            content: '\3E'
+            left: -10px
           a
             position: relative
             padding: 5px
             flex: 1 1 auto
             text-decoration: none 
             color: #1b1f23
-            &:hover:before
-              position: absolute
-              content: '\3E'
-              left: -10px
 
 // --------------- ARTICLE
 .article
@@ -207,7 +225,12 @@ section
     line-height: 2
     padding: 5%
     text-align: center
-    
+
+.translation
+  width: 80%;
+  padding: 2px;
+  border-radius: 3px;
+  border: 1px solid #999;
 
 // --------------- FILES
 .files
