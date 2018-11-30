@@ -67,7 +67,10 @@ class Home extends Component {
       <div className='home'>
         <section>
           <div className='pic-wrapper'>
-            <span>Nogizaka 46</span>
+            <div className='dream'>
+              <span className='_ngzk' data-text='Nogizaka'>Nogizaka </span>
+              <span className='_46' data-text='46'>46</span>
+            </div>
             <div className='pic' />
             <div className='bottom' />
             <div className='bottom-middle' />

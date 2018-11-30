@@ -1,307 +1,433 @@
 // /src/stylesheets/style.styl
-
+@charset 'utf-8'
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700,800|Noto+Serif')
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i')
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900')
 // ---------------- GLOBAL
 *
-  box-sizing: border-box
-  margin: 0
-  padding: 0
+  box-sizing border-box
+  margin 0
+  padding 0
 
 body
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
+  font-family 'Yu Gothic', 'Noto Sans JP'
 
 .show-block
-  display: block !important
+  display block !important
 
 .hide
-  display: none !important
+  display none !important
 
 canvas
-  position: fixed;
-  top: 0
-  left: 0
-  z-index: 0
-  width: 100%
-  height: 100%
-  pointer-events: none
+  position fixed
+  top 0
+  left 0
+  z-index 0
+  width 100%
+  height 100%
+  pointer-events none
 
 // ------------------- HOME
 .home
-  display: block
-  user-select: none
+  display block
+  user-select none
 
 section
-  display: block
-  width: 100%
-  height: 100%
+  display block
+  width 100%
+  height 100%
 
 .pic-wrapper
-  display: flex
-  justify-content: space-between
-  flex-wrap: wrap-reverse
-  position: relative
-  width: 100%
+  display flex
+  justify-content space-between
+  flex-wrap wrap-reverse
+  position relative
+  width 100%
   height 100%
-  overflow: hidden
-  span
-    position: absolute
-    font-size: 75px
-    font-family: 'IBM Plex Sans', sans-serif
-    color: #fff
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  overflow hidden
+  .dream
+    position absolute
+    font-size 75px
+    font-family 'IBM Plex Sans', sans-serif
+    color #fff
+    top 20%
+    left 50%
+    transform translate(-50%, -50%)
+    span._ngzk
+      position relative
+      animation glitch-primary 6000ms linear 240ms infinite normal none running
+      &:after
+        z-index: -1
+        content: attr(data-text)
+        position: absolute
+        top: 4px
+        left: -4px
+        width: 100%
+        height: 100%
+        color: rgba(255, 0, 0, 0.35)
+        background: transparent
+        animation: glitch-color 6000ms linear 0s infinite normal none running
+    span._46
+      position relative
+      animation glitch-secondary 6000ms linear 240ms infinite normal none running
+      &:after
+        z-index: -1
+        content: attr(data-text)
+        position: absolute
+        top: 4px
+        left: -4px
+        width: 100%
+        height: 100%
+        color: rgba(255, 0, 0, 0.35)
+        background: transparent
+        animation: glitch-color 6000ms linear 0s infinite normal none running
   .pic
-    display: block
-    z-index: -1
-    position: absolute
-    left: -10%
-    top: -10%
-    width: 120%
-    height: 120%
-    filter: brightness(30%)
+    display block
+    z-index -1
+    position absolute
+    left -40%
+    top -40%
+    width 180%
+    height 180%
+    will-change: transform
     background-color: #000
+    background-image: url(../images/others/noise.png)
+    transition: opacity 0.6s ease-out 0s
+    animation: noiseAnimation 1000ms steps(4, end) 0s infinite normal none running
   .bottom
-    background-color: #fff
-    display: block
-    height: 40px;
-    flex: 1
+    background-color #fff
+    display block
+    height 40px
+    flex 1
   .bottom-middle
-    height: 0
-    width: 0
-    border: 20px solid #fff
-    border-top-color: transparent
+    height 0
+    width 0
+    border 20px solid #fff
+    border-top-color transparent
 
 
 .search-wrapper
-  display: flex
-  justify-content: center
-  align-items: center
-  width: 100%
-  height: 100%
+  display flex
+  justify-content center
+  align-items center
+  width 100%
+  height 100%
   .search
-    position: relative
-    border: none
-    width: 60%
-    height: 35px
+    position relative
+    border none
+    width 60%
+    height 35px
     input
-      border: none 
-      outline: none
-      width: 100%
-      height: 100%
-      padding: 5px
-      background: none
-      color: #1b1f23
+      border none 
+      outline none
+      width 100%
+      height 100%
+      padding 5px
+      background none
+      color #1b1f23
       &:focus + .under-line
-        width: 100%
+        width 100%
     .under-line
-      position: absolute
-      left: 0
-      bottom: 0
-      width: 0
-      height: 1px
-      background-color: #333
-      transition: .45s all ease
+      position absolute
+      left 0
+      bottom 0
+      width 0
+      height 1px
+      background-color #333
+      transition .45s all ease
     .data-list
       ul
         li
-          display: flex
-          align-items: center
-          justify-content: flex-start
-          list-style: none
-          height: 35px
-          &.active:before
-            position: absolute
-            content: '\3E'
-            left: -10px
+          display flex
+          align-items center
+          justify-content flex-start
+          list-style none
+          height 35px
+          &.active::before
+            position absolute
+            content '\3E'
+            left -10px
           a
-            position: relative
-            padding: 5px
-            flex: 1 1 auto
-            text-decoration: none 
-            color: #1b1f23
+            position relative
+            padding 5px
+            flex 1 1 auto
+            text-decoration none 
+            color #1b1f23
 
 .grid-wrapper
-  width: 100%
-  height: 100%
-  background-color: #eee
+  width 100%
+  height 100%
+  background-color #eee
 
 
 // ------------------- BLOG
 .container
-  background-color: #eee
+  background-color #eee
 
 .blog
-  display: flex
-  justify-content: space-between
-  max-width: 1130px
-  margin-left: auto
-  margin-right: auto
-  margin-bottom: 75px
-  padding: 15px 15px
-  border-radius: 3px
+  display flex
+  justify-content space-between
+  max-width 1130px
+  margin-left auto
+  margin-right auto
+  margin-bottom 75px
+  padding 15px 15px
+  border-radius 3px
   .left
-    width: 33.333333%
-    padding: 10px
+    width 33.333333%
+    padding 10px
   .right
-    width: 66.666667%
-    padding: 10px
+    width 66.666667%
+    padding 10px
 
 
 // ------------------- NAV
 .nav
-  display: flex
-  justify-content: space-between
-  align-items: center
-  height: 215px
-  padding: 20px
-  text-transform: uppercase
-  user-select: none
-  background-color: #fff
-  font-size: 14px;
+  display flex
+  justify-content space-between
+  align-items center
+  height 215px
+  padding 20px
+  text-transform uppercase
+  user-select none
+  background-color #fff
+  font-size 14px
   .menu
     a
-      position: relative
-      padding: 3px 0
-      text-decoration: none
-      color: #666
-      letter-spacing: 2px
+      position relative
+      padding 3px 0
+      text-decoration none
+      color #666
+      letter-spacing 2px
     .selected
-      border-bottom: 1px solid #7e1083
+      border-bottom 1px solid #7e1083
     span
-      padding: 4px 12px
-      color: #cdcdcd
+      padding 4px 12px
+      color #cdcdcd
   .search
-    position: relative
-    border: none
-    width: 300px
-    height: 26px
+    position relative
+    border none
+    width 300px
+    height 26px
     input
-      border: none 
-      outline: none
-      width: 100%
-      padding: 5px
-      background: none
-      color: #1b1f23
-      &:focus + .under-line
-        width: 100%
+      border none 
+      outline none
+      width 100%
+      padding 5px
+      background none
+      color #1b1f23
+      &focus + .under-line
+        width 100%
     .under-line
-      position: absolute
-      left: 0
-      bottom: 0
-      width: 0
-      height: 1px
-      background-color: #333
-      transition: .45s all ease
+      position absolute
+      left 0
+      bottom 0
+      width 0
+      height 1px
+      background-color #333
+      transition .45s all ease
     .data-list
       ul
         li
-          display: flex
-          align-items: center
-          justify-content: flex-start
-          list-style: none
-          &.active:before
-            position: absolute
-            content: '\3E'
-            left: -10px
+          display flex
+          align-items center
+          justify-content flex-start
+          list-style none
+          &.active::before
+            position absolute
+            content '\3E'
+            left -10px
           a
-            position: relative
-            padding: 5px
-            flex: 1 1 auto
-            text-decoration: none 
-            color: #1b1f23
+            position relative
+            padding 5px
+            flex 1 1 auto
+            text-decoration none 
+            color #1b1f23
 
 // --------------- ARTICLE
 .article
-  border-radius: 4px
-  box-shadow: 0px 1px 1px rgba(0,0,0,.05);
-  background-color: #fff
+  border-radius 4px
+  box-shadow 0px 1px 1px rgba(0,0,0,.05)
+  background-color #fff
   h3
-    text-align: center
-    padding: 58px 0 40px 0
-    font-size: 14px
-    border-bottom: 1px solid #eee
+    text-align center
+    padding 58px 0 40px 0
+    font-size 14px
+    border-bottom 1px solid #eee
   .text
-    font-size: 80%
-    line-height: 2
-    padding: 5%
-    text-align: center
+    font-size 80%
+    line-height 2
+    padding 5%
+    text-align center
 
 .translation
-  width: 80%;
-  padding: 2px;
-  border-radius: 3px;
-  border: 1px solid #999;
+  width 80%
+  padding 2px
+  border-radius 3px
+  border 1px solid #999
 
 // --------------- FILES
 .files
-  display: block
-  margin-top: 20px
-  background-color: #fff
-  border-radius: 4px
+  display block
+  margin-top 20px
+  background-color #fff
+  border-radius 4px
   .header
-    display: flex
-    justify-content: space-between
-    align-items: center
-    padding: 8px 16px
+    display flex
+    justify-content space-between
+    align-items center
+    padding 8px 16px
     h3
-      line-height: 1.25
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase
+      line-height 1.25
+      font-size 14px
+      font-weight 600
+      text-transform uppercase
   .body
-    display: block
-    min-height: 350px
-    padding: 8px 16px
+    display block
+    min-height 350px
+    padding 8px 16px
     .tree
-      user-select: none
+      user-select none
       div
-        cursor: pointer
-        border-radius: 3px
-        transition: .75s all ease
+        cursor pointer
+        border-radius 3px
+        transition .75s all ease
         &:hover
-          background-color: rgba(126, 16, 131, 0.2)
+          background-color rgba(126, 16, 131, 0.2)
         span
-          padding: 5px
-          font-weight: 600
+          padding 5px
+          font-weight 600
       ul
-        padding: 5px
+        padding 5px
         li
-          margin-left: 16px
-          font-size: 14px
-          list-style: none
+          margin-left 16px
+          font-size 14px
+          list-style none
           a
-            text-decoration: none 
-            color: #1b1f23
-            font-size: 12px
+            text-decoration none 
+            color #1b1f23
+            font-size 12px
             &:hover
-              border-bottom: 1px solid #1b1f23
+              border-bottom 1px solid #1b1f23
 
 
 // ----------------- PROFILE
 .profile
-  display: block
-  background-color: #fff
-  border: none
-  border-radius: 4px
+  display block
+  background-color #fff
+  border none
+  border-radius 4px
   .header
-    display: flex
-    justify-content: space-between
-    align-items: center
-    padding: 8px 16px
+    display flex
+    justify-content space-between
+    align-items center
+    padding 8px 16px
     h3
-      line-height: 1.25
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase
+      line-height 1.25
+      font-size 14px
+      font-weight 600
+      text-transform uppercase
   .body
-    padding: 8px 16px
+    padding 8px 16px
     .avatar
     .info
-      text-align: center
+      text-align center
       h3
-        padding: 5px 0
-        font-size: 16px
+        padding 5px 0
+        font-size 16px
       p
-        font-size: 14px
-        line-height: 1.5
-        white-space: nowrap
+        font-size 14px
+        line-height 1.5
+        white-space nowrap
+
+
+
+
+@keyframes glitch-secondary
+  0%
+    transform translate3d(-2vw, 3vh, 0px)
+    clip-path polygon(0px 20%, 100% 20%, 100% 21%, 0px 21%)
+  2%
+    clip-path polygon(0px 33%, 100% 33%, 100% 33%, 0px 33%)
+  4%
+    clip-path polygon(0px 44%, 100% 44%, 100% 44%, 0px 44%)
+  5%
+    clip-path polygon(0px 50%, 100% 50%, 100% 20%, 0px 20%)
+  6%
+    clip-path polygon(0px 70%, 100% 70%, 100% 70%, 0px 70%)
+  7%
+    clip-path polygon(0px 80%, 100% 80%, 100% 80%, 0px 80%)
+  8%
+    clip-path polygon(0px 50%, 100% 50%, 100% 55%, 0px 55%)
+  9%
+    clip-path polygon(0px 70%, 100% 70%, 100% 80%, 0px 80%)
+  9.9%
+    transform translate3d(-2vw, 3vh, 0px)
+  10%, 100%
+    transform translate3d(0px, 0px, 0px)
+    clip-path polygon(0px 0px, 100% 0px, 100% 100%, 0% 100%)
+
+
+@keyframes glitch-primary
+  0%
+    transform translate3d(8vw, -3vh, 0px)
+    clip-path polygon(0px 20%, 100% 20%, 100% 21%, 0px 21%)
+  2%
+    clip-path polygon(0px 33%, 100% 33%, 100% 33%, 0px 33%)
+  4%
+    clip-path polygon(0px 44%, 100% 44%, 100% 44%, 0px 44%)
+  5%
+    clip-path polygon(0px 50%, 100% 50%, 100% 20%, 0px 20%)
+  6%
+    clip-path polygon(0px 70%, 100% 70%, 100% 70%, 0px 70%)
+  7%
+    clip-path polygon(0px 80%, 100% 80%, 100% 80%, 0px 80%)
+  8%
+    clip-path polygon(0px 50%, 100% 50%, 100% 55%, 0px 55%)
+  9%
+    clip-path polygon(0px 70%, 100% 70%, 100% 80%, 0px 80%)
+  9.9%
+    transform translate3d(8vw, -3vh, 0px)
+  10%, 100%
+    transform translate3d(0px, 0px, 0px)
+    clip-path polygon(0px 0px, 100% 0px, 100% 100%, 0% 100%)
+
+
+@keyframes glitch-color 
+  0% 
+    opacity 1
+  5.9% 
+    left -4px
+    opacity 0
+    z-index 1
+  11.9%
+    left 10px
+  12%
+    opacity 1
+  24%, 100%
+    opacity 0
+    z-index -1
+
+@keyframes noiseAnimation 
+  0%
+    transform: translate(0px)
+  10%
+    transform: translate(-5%, -5%)
+  20% 
+    transform: translate(-10%, 5%)
+  30% 
+    transform: translate(5%, -10%)
+  40% 
+    transform: translate(-5%, 15%)
+  50% 
+    transform: translate(-10%, 5%)
+  60% 
+    transform: translate(15%)
+  70% 
+    transform: translateY(10%)
+  80% 
+    transform: translate(-15%)
+  90% 
+    transform: translate(10%, 5%)
+  100% 
+    transform: translate(5%);
