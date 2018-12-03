@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Motion, spring } from 'react-motion';
 import { homeActions } from 'actions/home';
 
 class Home extends Component {
@@ -10,84 +11,45 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener('touchmove', function (e) {
-      e.preventDefault()
-    })
-    const canvas = document.getElementsByTagName('canvas')[0];
-    const context = canvas.getContext('2d');
-    const pixelRatio = window.devicePixelRatio || 1;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const stepLength = 90;
-
-    let functor = 0;
-
-    canvas.width = width * pixelRatio;
-    canvas.height = height * pixelRatio;
-    context.scale(pixelRatio, pixelRatio);
-    context.globalAlpha = 0.6;
-
-    const main = () => {
-      context.clearRect(0, 0, width, height); 
-      let [ point, _point ] = [ { x: 0, y: height * .7 + stepLength }, { x: 0, y: height * .7 - stepLength } ];
-      while ( _point.x < width + stepLength ) [ point, _point ] = draw(point, _point);
-    }
-
-    const draw = (point, _point) => {
-      context.beginPath();
-      context.moveTo(point.x, point.y);
-      context.lineTo(_point.x, _point.y);
-      const { x, y } = nextPoint(_point);
-      context.lineTo(x, y);
-      context.closePath();
-      functor += Math.PI * 2 / 50;
-      // context.fillStyle = '#7e1083';
-      context.fillStyle = '#'+ ( 
-        Math.cos(functor) * 127 + 128 << 16 | 
-        Math.cos(functor + Math.PI * 2 / 3) * 127 + 128 << 8 | 
-        Math.cos(functor + Math.PI * 2 / 3 * 2 ) * 127 + 128 
-      ).toString(16);
-      context.fill();
-      return [ _point, { x, y } ];
-    }
-    const nextPoint = (point) => {
-      const { x, y } = point;
-      const _y = y + ( Math.random() * 2 - 1.1 ) * stepLength;
-      const _x = x + ( Math.random() * 2 - 0.25 ) * stepLength;
-      return ( _y > height || _y < 0 ) ? nextPoint(point) : { x: _x, y: _y };
-    }
-    // document.onclick = main;
-    // document.ontouchstart = main;
-    // main();
+    const { scrollInit } = this.props;
+    const size = 3;
+    const limit = size * window.innerHeight;
+    scrollInit(limit, size);
   }
 
   render() {
-    
+    const { scrollUp, scrollDown, offset } = this.props;
     return (
-      <div className='home'>
-        <section>
-          <div className='pic-wrapper'>
-            <div className='dream'>
-              <span className='_ngzk' data-text='Nogizaka'>Nogizaka </span>
-              <span className='_46' data-text='46'>46</span>
-            </div>
-            <div className='pic' />
-            <div className='bottom' />
-            <div className='bottom-middle' />
-            <div className='bottom' />
-          </div>
-        </section>
-        <section>
-          <div className='search-wrapper'>
-            <canvas />
-            <Search history={this.props.history} />
-          </div>
-        </section>
-        <section>
-          <div className='grid-wrapper'>
+      <div onWheel={e => { if (e.deltaY > 0) scrollDown(); else scrollUp(); }} className='home'>
+        <Motion defaultStyle={{ offset: 0 }} style={{ offset: spring(offset.value) }} >
+          {({ offset }) => 
+            <div className='slider' style={{ transform: `translateY(${offset}px)` }}>
+              <section>
+                <div className='pic-wrapper'>
+                  <div className='dream'>
+                    <span className='_ngzk' data-text='Nogizaka'>Nogizaka </span>
+                    <span className='_46' data-text='46'>46</span>
+                  </div>
+                  <div className='pic' />
+                  <div className='bottom' />
+                  <div className='bottom-middle' />
+                  <div className='bottom' />
+                </div>
+              </section>
+              <section>
+                <div className='search-wrapper'>
+                  <canvas />
+                  <Search history={this.props.history} />
+                </div>
+              </section>
+              <section>
+                <div className='grid-wrapper'>
 
-          </div>
-        </section>
+                </div>
+              </section>
+            </div>
+          }
+        </Motion>
       </div>
     );
   }
@@ -123,7 +85,6 @@ export const Search = connect(mapStateToProps, mapDispatchToProps)((props) => {
       setCurrent(0);
         handleInput(item.name);
         handleInput();
-        
         history.push({ pathname: `/blog/${item.roma.replace(/\s/, '_')}` }); 
         break;
       default:
@@ -162,4 +123,13 @@ export const Search = connect(mapStateToProps, mapDispatchToProps)((props) => {
 
 
 
-export default Home;
+export default connect(
+  ({ pure: { home: { offset } } }) => ({
+    offset
+  }),
+  dispatch => ({
+    scrollInit: (limit, size) => dispatch(homeActions.home.slider.scroll.init(limit, size)),
+    scrollUp: () => dispatch(homeActions.home.slider.scroll.up()),
+    scrollDown: () => dispatch(homeActions.home.slider.scroll.down())
+  })
+)(Home);

@@ -79,4 +79,30 @@ const cache = handleActions(
   { history: [] }
 );
 
-export default combineReducers({ hint, cache });
+const offset = handleActions(
+  new Map([
+    [
+      homeActions.home.slider.scroll.init,
+      (state, action) => ({ ...state, ...action.payload })
+    ],
+    [
+      homeActions.home.slider.scroll.up,
+      (state, _) => {
+        const { value, limit, size } = state;
+        const next = value + limit / size;
+        return { ...state, value: next > 0 ? 0 : next };
+      }
+    ],
+    [
+      homeActions.home.slider.scroll.down,
+      (state, _) => {
+        const { value, limit, size } = state;
+        const next = value - limit / size;
+        return { ...state, value: next < - ( limit - limit / size ) ? - ( limit - limit / size ) : next };
+      }
+    ]
+  ]),
+  { value: 0, limit: 0, size: 0 }
+);
+
+export default combineReducers({ hint, cache, offset });

@@ -18,7 +18,13 @@ export const homeActions = createActions({
         SET: (value) => ({ value }),
         RESET: undefined
       }
-      
+    },
+    SLIDER: {
+      SCROLL: {
+        INIT: (limit, size) => ({ limit, size }),
+        UP: undefined,
+        DOWN: undefined
+      }
     }
   }
 }, { namespace: '_' })
