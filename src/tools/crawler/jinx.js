@@ -343,8 +343,9 @@ class Machine {
     const map = deriveImageMap(o);
     // mkdir
     const images = o.content.querySelectorAll('img');
-    if (!!images[0]) {
-      const [ _, any, __ ] = map.get(images[0].src);
+    const [ sample, ...rest ] = images;
+    if (!!sample) {
+      const [ _, any, __ ] = map.get(sample.src);
       const dir = path.dirname(any);
       if (fs.existsSync(dir)) Utils.rmdirs(dir);
       if (!fs.existsSync(dir)) Utils.mkdirs(dir);
@@ -363,7 +364,7 @@ class Machine {
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/yumi.wakatsuki/?d=201810',
+  entry: 'http://blog.nogizaka46.com/ayane.suzuki/?d=archives',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -378,15 +379,13 @@ const m = new Machine({
       const connects = [...links].map((link) => () => connect(link.href));
       const feedback = await Utils.all(connects, 100);
       // log('info', feedback);
-      const n = doc.querySelector('.next');
-      // if (!!n) next(n.href);
-      if (!!n) return n.href;
+      return feedback;
     };
-    let k = entry;
-    while(k) {
-      if ( environment === 'DEV' ) console.log(`next ${k}`);
-      // log('info', `next ${k}`);
-      k = await next(k);
+    const page = await Utils.retry(() => axios({ url: entry, timeout: 5000 }));
+    const archives = [...JSDOM.fragment(page.data).querySelectorAll('.archive-content a')].map(ele => ele.href);
+    for (let archive of archives) {
+      if ( environment === 'DEV' ) log('info', `next ${archive}`);
+      await next(archive);
     }
     return;
   },
