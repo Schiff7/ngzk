@@ -7,30 +7,21 @@ const { JSDOM } = require('jsdom');
 // Log configuration.
 log4js.configure({
   appenders: {
-    jinx: { type: 'file', filename: path.resolve(__dirname, 'jinx.log') },
-    jinx_error : { type: 'file', filename: path.resolve(__dirname, 'jinx_error.log'), level: 'error' },
+    all: { type: 'file', filename: 'jinx.log' },
+    error: { type: 'file', filename: 'jinx_error.log' },
+    just_error : { type: 'logLevelFilter', appender: 'error', level: 'error' }
   },
   categories: {
-    default: { appenders: ['jinx', 'jinx_error'], level: 'info' }
+    default: { appenders: ['all', 'just_error'], level: 'info' }
   }
 });
 
-const logger = log4js.getLogger('jinx');
+const logger = log4js.getLogger();
 
 // -------------------------- GLOBAL
 
 const log = (level, msg) => logger[level](msg);
 const environment = 'DEV';
-const allMember = [
-  'manatsu akimoto', 'erika ikuta', 'karin itou', 'jyunna itou', 'riria itou',
-  'sayuri inoue', 'renka iwamoto', 'minami umezawa', 'misa etou', 'momoko oozono',
-  'hina kawago', 'hinako kitano', 'shiori kubo', 'asuka saitou', 'yuuri saitou',
-  'tamami sakaguchi', 'reika sakurai', 'kotoko sasaki', 'kaede satou', 'mai shiraishi',
-  'mai shinuchi', 'ayane suzuki', 'kazumi takayama', 'ranze terada', 'kana nakada',
-  'reno nakamura', 'nanase nishino', 'ami noujyou', 'hina higuchi', 'minami hoshino',
-  'miona hori', 'sayuri matsumura', 'hazuki mukai', 'rena yamazaki', 'mizuki yamashita',
-  'ayanochristie yoshida', 'yuuki yoda', 'yumi wakatsuki', 'miria watanabe', 'maaya wada',
-];
 
 if ( environment === 'DEV' ) console.log(environment);
 
@@ -200,7 +191,7 @@ class Utils {
    */
   static read(dirpath) {
     if (!fs.existsSync(dirpath))
-      console.log(`${dirpath} does not exist.`);
+      throw Error(`${dirpath} does not exist.`);
     const eles = Object.create(null);
     if (fs.statSync(dirpath).isDirectory()) {
       const dirs = fs.readdirSync(dirpath);
@@ -358,7 +349,7 @@ class Machine {
       requests.push(request);
       Utils.resetAttributes(image, { src });
     });
-    const records = await Utils.all(requests, 100);
+    const records = await Utils.all(requests, 1000);
     return records;
   }
 }
@@ -439,22 +430,4 @@ const m = new Machine({
 m.run();
 //m.connect('http://blog.nogizaka46.com/ami.noujo/?d=20130615')
 
-// function createContents(name) {
-//   const from = path.resolve(Utils.foldback(__dirname, 2), 'views/blog');
-//   const to = path.resolve(Utils.foldback(__dirname, 2), 'views/contents');
-//   const contents = yaml.dump(Utils.read(path.resolve(from, name)));
-//   const writable = fs.createWriteStream(path.resolve(to, `${name}.yaml`));
-//   writable.write(contents, 'utf-8', (error) => { if (error) console.error(error) });
-// }
-
-// createContents('yuuki_yoda');
-// createContents('mizuki_yamashita');
-// createContents('hazuki_mukai');
-
-// function breakfast() {
-//   const date = Utils.format(new Date(), 'yyyyMMdd');
-//   const urls = allMember.map(name => `http://blog.nogizaka46.com/${name.replace(/\s/, '.')}/?d=${date}`);
-//   console.log(urls);
-// }
-
-// breakfast();
+module.exports = Utils;
