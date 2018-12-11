@@ -2,7 +2,7 @@
 import axios from 'axios';
 import yaml from 'js-yaml';
 
-const HOSTNAME = 'https://nyctophilia.github.io/ngzk/src';
+const HOSTNAME = 'https://hymain.github.io/ngzk/src';
 
 const fetchProf = async (name) => {
   try {

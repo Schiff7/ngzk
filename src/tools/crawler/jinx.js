@@ -201,22 +201,22 @@ class Utils {
   static read(dirpath) {
     if (!fs.existsSync(dirpath))
       console.log(`${dirpath} does not exist.`);
-    const o = Object.create(null);
+    const eles = Object.create(null);
     if (fs.statSync(dirpath).isDirectory()) {
       const dirs = fs.readdirSync(dirpath);
       dirs.forEach(dir => {
         const fullPath = path.resolve(dirpath, dir);
         if (fs.statSync(fullPath).isDirectory()) {
-          o[dir] = this.read(fullPath);
+          eles[dir] = this.read(fullPath);
         } else {
             const doc = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8'));
-            o[dir] = doc.title; 
+            eles[dir] = doc.title; 
         }
       });
     } else {
       return path.basename(dirpath);
     }
-    return o;
+    return eles;
   }
 
 
@@ -262,19 +262,19 @@ class Machine {
     const { options, purity, deriveLoadPath, deriveImageMap } = this.conf;
     // extract
     if ( environment === 'DEV' ) console.log(`\t connect ${url}.`);
-    const o = await this.extract(url, options);
+    const eles = await this.extract(url, options);
     if ( environment === 'DEV' ) console.log('\t\t extracted.');
     // handle images
-    const images = await this.handleImages(o, deriveImageMap);
+    const images = await this.handleImages(eles, deriveImageMap);
     if ( environment === 'DEV' ) console.log('\t\t images handled.');
     // handle blog
-    const savepath = deriveLoadPath(o);
+    const savepath = deriveLoadPath(eles);
     const dir = path.dirname(savepath);
     if (!fs.existsSync(dir)) Utils.mkdirs(dir);
     // ...
     const views = await new Promise((resolve, reject) => {
       const writable = fs.createWriteStream(savepath);
-      writable.write(purity(o), 'utf-8', (error) => {
+      writable.write(purity(eles), 'utf-8', (error) => {
         if (error) reject(error);
       });
       resolve(Utils.action('views', { url }));
@@ -297,7 +297,7 @@ class Machine {
    */
   async extract(url, options) {
     const response = await Utils.retry(
-      () => axios({ url, timeout: 5000 }), 
+      () => axios({ url }), 
       () => { throw new Error(Utils.action('extract', url)) }, 7 );
     const doc = JSDOM.fragment(response.data);
     const result = { url };
@@ -314,7 +314,7 @@ class Machine {
    */
   async writeImage(url, path) {
     const response = await Utils.retry(
-      () => axios({ url, timeout: 5000, responseType: 'stream' }),
+      () => axios({ url, responseType: 'stream' }),
       () => { throw new Error(Utils.action('request_image', url)) }, 3 );
     // ...
     const feedback = await new Promise((resolve, reject) => {
@@ -335,14 +335,14 @@ class Machine {
 
   /**
    * handle the images in the extracted content.
-   * @param {*} o 
+   * @param {*} eles 
    * @param {*} deriveImageMap 
    */
-  async handleImages(o, deriveImageMap) {
+  async handleImages(eles, deriveImageMap) {
     // get images map.
-    const map = deriveImageMap(o);
+    const map = deriveImageMap(eles);
     // mkdir
-    const images = o.content.querySelectorAll('img');
+    const images = eles.content.querySelectorAll('img');
     const [ sample, ...rest ] = images;
     if (!!sample) {
       const [ _, any, __ ] = map.get(sample.src);
@@ -364,7 +364,7 @@ class Machine {
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/ayane.suzuki/?d=archives',
+  entry: 'http://blog.nogizaka46.com/hina.kawago/?d=archives',
   options: {
     title: '.entrytitle',
     author: '.author',
@@ -373,7 +373,7 @@ const m = new Machine({
   },
   rules: (entry) => async (connect) => {
     const next = async (entry) =>{
-      const response = await Utils.retry(() => axios({ url: entry, timeout: 5000 }));
+      const response = await Utils.retry(() => axios({ url: entry }));
       const doc = JSDOM.fragment(response.data);
       const links = doc.querySelector('#daytable').querySelectorAll('a');
       const connects = [...links].map((link) => () => connect(link.href));
@@ -381,7 +381,7 @@ const m = new Machine({
       // log('info', feedback);
       return feedback;
     };
-    const page = await Utils.retry(() => axios({ url: entry, timeout: 5000 }));
+    const page = await Utils.retry(() => axios({ url: entry }));
     const archives = [...JSDOM.fragment(page.data).querySelectorAll('.archive-content a')].map(ele => ele.href);
     for (let archive of archives) {
       if ( environment === 'DEV' ) log('info', `next ${archive}`);
@@ -389,24 +389,24 @@ const m = new Machine({
     }
     return;
   },
-  deriveLoadPath: (o) => {
-    const date = new Date(o.date.textContent.slice(0, 16));
-    const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0].replace(/\./, '_');
-    const savepath = `views/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}.yaml`;
+  deriveLoadPath: (eles) => {
+    const date = new Date(eles.date.textContent.slice(0, 16));
+    const name = /[a-z.]+(?=\/\?d)/.exec(eles.url)[0].replace(/\./, '_');
+    const savepath = `views/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}.yml`;
     return path.resolve(Utils.foldback(__dirname, 2), savepath);
   },
-  deriveImageMap: (o) => {
+  deriveImageMap: (eles) => {
     const hostname = '';
     const map = new Map();
-    const links = o.content.querySelectorAll('a');
+    const links = eles.content.querySelectorAll('a');
     if (links.length !== 0) {
       [...links].forEach((link) => {
         link.replaceWith(link.firstChild);
       })
     }
-    const images = o.content.querySelectorAll('img');
-    const date = new Date(o.date.textContent.slice(0, 16));
-    const name = /[a-z.]+(?=\/\?d)/.exec(o.url)[0].replace(/\./, '_');
+    const images = eles.content.querySelectorAll('img');
+    const date = new Date(eles.date.textContent.slice(0, 16));
+    const name = /[a-z.]+(?=\/\?d)/.exec(eles.url)[0].replace(/\./, '_');
     const randomStr = () => Math.random().toString(36).slice(2, 10);
     for (let image of images) {
       const savepath = `images/blog/${name}/${Utils.format(date, 'yyyy/MM/dd')}/${randomStr()}.jpg`;
@@ -419,18 +419,18 @@ const m = new Machine({
     }
     return map;
   },
-  purity: (o) => {
-    const date = o.date.textContent.slice(0, 16);
-    const meta = o.content.querySelector('meta');
+  purity: (eles) => {
+    const date = eles.date.textContent.slice(0, 16);
+    const meta = eles.content.querySelector('meta');
     if (!!meta) {
-      o.content.removeChild(meta.parentNode === o.content ? meta : meta.parentNode);
+      eles.content.removeChild(meta.parentNode === eles.content ? meta : meta.parentNode);
     }
     return yaml.dump({
-      url: o.title.firstChild.href,
-      title: o.title.firstChild.textContent,
+      url: eles.title.firstChild.href,
+      title: eles.title.firstChild.textContent,
       date: date,
-      author: o.author.textContent,
-      content: o.content.innerHTML
+      author: eles.author.textContent,
+      content: eles.content.innerHTML
     });
   }
 });

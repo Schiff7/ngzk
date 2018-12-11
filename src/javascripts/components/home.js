@@ -38,7 +38,6 @@ class Home extends Component {
               </section>
               <section>
                 <div className='search-wrapper'>
-                  <canvas />
                   <Search history={this.props.history} />
                 </div>
               </section>
