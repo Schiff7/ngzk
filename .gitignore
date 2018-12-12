@@ -61,5 +61,3 @@ typings/
 .next
 
 # images and yaml files
-*.yaml
-*.jpg

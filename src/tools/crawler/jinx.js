@@ -355,7 +355,7 @@ class Machine {
 }
 
 const m = new Machine({
-  entry: 'http://blog.nogizaka46.com/hina.kawago/?d=archives',
+  entry: 'http://blog.nogizaka46.com/yuuki.yoda/?d=archives',
   options: {
     title: '.entrytitle',
     author: '.author',
