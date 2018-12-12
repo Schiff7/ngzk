@@ -6,6 +6,7 @@ import { isEqual } from 'lodash';
 class Article extends Component {
   constructor(props) {
     super(props);
+    this.text = React.createRef();
   }
 
   componentDidMount() {
@@ -41,7 +42,7 @@ class Article extends Component {
       <div className='article'>
         <div>
           <h3>{title}</h3>
-          <div className='text' onClick={this.createInput} dangerouslySetInnerHTML={{ __html: content }} ></div>
+          <div className='text' ref={this.text} onClick={this.createInput} dangerouslySetInnerHTML={{ __html: content }} ></div>
         </div>
       </div>
     );

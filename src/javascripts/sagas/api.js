@@ -6,7 +6,7 @@ const HOSTNAME = 'https://hymain.github.io/ngzk/src';
 
 const fetchProf = async (name) => {
   try {
-    const prof = await axios.get(`${HOSTNAME}/views/profile/${name}.yaml`);
+    const prof = await axios.get(`${HOSTNAME}/views/profile/${name}.yml`);
     return yaml.safeLoad(prof.data);
   } catch (error) {
     console.error(error);
@@ -15,7 +15,7 @@ const fetchProf = async (name) => {
 
 const fetchContents = async (name) => {
   try {
-    const contents = await axios.get(`${HOSTNAME}/views/contents/${name}.yaml`);
+    const contents = await axios.get(`${HOSTNAME}/views/contents/${name}.yml`);
     const raw = yaml.safeLoad(contents.data);
     return { raw };
   } catch (error) {
@@ -25,9 +25,19 @@ const fetchContents = async (name) => {
 
 const fetchArticle = async (location) => {
   try {
-    const article = await axios.get(`${HOSTNAME}/views/blog/${location}.yaml`);
+    const article = await axios.get(`${HOSTNAME}/views/blog/${location}.yml`);
     const raw = yaml.safeLoad(article.data);
-    raw.content = raw.content.replace(/src="([a-zA-Z0-9_/.]+?)"/g, `src="${HOSTNAME}$1"`);
+    const div = document.createElement('div');
+    div.innerHTML = raw.content;
+    [...div.querySelectorAll('img')].map(i => {
+      i.src = `${HOSTNAME}${i['getAttribute']('src')}`;
+      i.onerror = function() {
+        const img = event.srcElement;
+        img.src = '';
+        img.onerror = null;
+      }
+    });
+    raw.content = div.innerHTML;
     return raw;
   } catch (error) {
     console.error(error);

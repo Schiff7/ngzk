@@ -67,7 +67,7 @@ class Tree extends Component {
             typeof v === 'string' 
             ? (
               <li key={k}>
-                <Link to={`${location}/${slice(k, 4)}`}>{`* ${slice(k, 2)}: ${slice(v, 10)}...`}</Link>
+                <Link to={`${location}/${slice(k, 4)}`}>{`* ${k}: ${slice(v, 10)}...`}</Link>
               </li>
             )
             : (
