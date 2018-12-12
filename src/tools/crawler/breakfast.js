@@ -1,5 +1,5 @@
 // breakfast.
-const Utils = require('./jinx');
+const Utils = require('./utils');
 const members = require('./members');
 const { replace } = require('lodash');
 

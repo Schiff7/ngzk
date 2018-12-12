@@ -1,5 +1,5 @@
 // create contents.
-const Utils = require('./jinx');
+const Utils = require('./utils');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -13,6 +13,3 @@ function contents(name) {
 }
 
 contents('yuuki_yoda');
-contents('mizuki_yamashita');
-contents('hazuki_mukai');
-
