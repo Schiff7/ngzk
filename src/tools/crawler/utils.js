@@ -179,14 +179,13 @@ class Utils {
         } else {
           if (/\.(yml|yaml)$/.test(dir)) {
             const doc = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8'));
-            eles[dir] = doc.title; 
+            eles[dir.replace(/\.(yml|yaml)$/, '')] = doc.title; 
           }
         }
       });
     } else {
       return path.basename(dirpath);
     }
-    console.log(eles);
     return eles;
   }
 }
