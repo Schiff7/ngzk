@@ -2,7 +2,7 @@
 
 // names applied in the following function.
 const names = [
-  { name: '秋元 真夏', hiragana : 'あきもと まなつ', roma: 'manatsu akimoto', nickname: ['嫂子'] },
+  { name: '秋元 真夏', hiragana : 'あきもと まなつ', roma: 'manatsu akimoto', nickname: [] },
   { name: '生田 絵梨花', hiragana : 'いくた えりか', roma: 'erika ikuta', nickname: ['花花','画伯','ET'] },
   { name: '伊藤 かりん', hiragana : 'いとう かりん', roma: 'karin itou', nickname: [] },
   { name: '伊藤 純奈', hiragana : 'いとう じゅんな', roma: 'jyunna itou', nickname: [] },
@@ -18,7 +18,7 @@ const names = [
   { name: '齋藤 飛鳥', hiragana : 'さいとう あすか', roma: 'asuka saitou', nickname: ['飞鸟'] },
   { name: '斉藤 優里', hiragana : 'さいとう ゆうり', roma: 'yuuri saitou', nickname: ['优蛋'] },
   { name: '阪口 珠美', hiragana : 'さかぐち たまみ', roma: 'tamami sakaguchi', nickname: [] },
-  { name: '桜井 玲香', hiragana : 'さくらい れいか', roma: 'reika sakurai', nickname: ['废队'] },
+  { name: '桜井 玲香', hiragana : 'さくらい れいか', roma: 'reika sakurai', nickname: [] },
   { name: '佐々木 琴子', hiragana : 'ささき ことこ', roma: 'kotoko sasaki', nickname: ['KTK','ktk'] },
   { name: '佐藤 楓', hiragana : 'さとう かえで', roma: 'kaede satou', nickname: ['den'] },
   { name: '白石 麻衣', hiragana : 'しらいし まい', roma: 'mai shiraishi', nickname: ['白麻'] },
@@ -29,19 +29,19 @@ const names = [
   { name: '中田 花奈', hiragana : 'なかだ かな', roma: 'kana nakada', nickname: [] },
   { name: '中村 麗乃', hiragana : 'なかむら れの', roma: 'reno nakamura', nickname: [] },
   { name: '西野 七瀬', hiragana : 'にしの ななせ', roma: 'nanase nishino', nickname: ['7'] },
-  { name: '能條 愛未', hiragana : 'のうじょう あみ', roma: 'ami noujo', nickname: ['脚','Johnson'] },
+  { name: '能條 愛未', hiragana : 'のうじょう あみ', roma: 'ami noujo', nickname: [] },
   { name: '樋口 日奈', hiragana : 'ひぐち ひな', roma: 'hina higuchi', nickname: [] },
   { name: '星野 みなみ', hiragana : 'ほしの みなみ', roma: 'minami hoshino', nickname: ['小南','18'] },
-  { name: '堀 未央奈', hiragana : 'ほり みおな', roma: 'miona hori', nickname: ['猴莉'] },
-  { name: '松村 沙友理', hiragana : 'まつむら さゆり', roma: 'sayuri matsumura', nickname: ['傻'] },
-  { name: '向井 葉月', hiragana : 'むかい はづき', roma: 'hazuki mukai', nickname: ['叶月'] },
-  { name: '山崎 怜奈', hiragana : 'やまざき れな', roma: 'rena yamazaki', nickname: ['学霸'] },
+  { name: '堀 未央奈', hiragana : 'ほり みおな', roma: 'miona hori', nickname: [] },
+  { name: '松村 沙友理', hiragana : 'まつむら さゆり', roma: 'sayuri matsumura', nickname: [] },
+  { name: '向井 葉月', hiragana : 'むかい はづき', roma: 'hazuki mukai', nickname: [] },
+  { name: '山崎 怜奈', hiragana : 'やまざき れな', roma: 'rena yamazaki', nickname: [] },
   { name: '山下 美月', hiragana : 'やました みづき', roma: 'mizuki yamashita', nickname: [] },
   { name: '吉田 綾乃クリスティー', hiragana : 'よしだ あやのくりすてぃー', roma: 'ayanochristie yoshida', nickname: [] },
   { name: '与田 祐希', hiragana : 'よだ ゆうき', roma: 'yuuki yoda', nickname: [] },
-  { name: '若月 佑美', hiragana : 'わかつき ゆみ', roma: 'yumi wakatsuki', nickname: ['月少'] },
+  { name: '若月 佑美', hiragana : 'わかつき ゆみ', roma: 'yumi wakatsuki', nickname: [] },
   { name: '渡辺 みり愛', hiragana : 'わたなべ みりあ', roma: 'miria watanabe', nickname: [] },
-  { name: '和田 まあや', hiragana : 'わだ まあや', roma: 'maaya wada', nickname: ['baka'] },
+  { name: '和田 まあや', hiragana : 'わだ まあや', roma: 'maaya wada', nickname: [] },
 ]
 /**
  * Match the input string (name) with the full name infomation.
