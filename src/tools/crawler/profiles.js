@@ -30,7 +30,7 @@ async function profiles() {
     const [ img, div ] = [...profile.children];
     avatars_requests.push(roma => {
       Utils.retry(() => axios({ url: img.src, responseType: 'stream' })).then(res => { 
-        res.data.pipe(fs.createWriteStream(`${Utils.foldback(__dirname, 2)}/images/member/${roma}.jpg`));
+        res.data.pipe(fs.createWriteStream(`${Utils.foldback(__dirname, 2)}/images/member/22/${roma}.jpg`));
       }).catch(error => console.error(error));
     });
     const [ h2, dl ] = [...div.children];
