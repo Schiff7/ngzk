@@ -9,8 +9,9 @@ const yaml = require('js-yaml');
 const fmap = (funs) => (params) => {
   const length = funs.length;
   const result = [];
-  if ( params.length === length ) return [];
+  if ( params.length !== length ) return [];
   for ( let i = 0; i < length; i++ ) {
+    console.log(params[i]);
     result.push(funs[i](params[i]));
   }
   return result;
@@ -25,7 +26,7 @@ async function profiles() {
   const infos = [];
   for ( const link of links ) {
     const response = await axios({ url: link });
-    const doc = JSDOM.fragment(response);
+    const doc = JSDOM.fragment(response.data);
     const profile = doc.querySelector('#profile');
     const [ img, div ] = [...profile.children];
     avatars_requests.push(roma => {
@@ -44,7 +45,7 @@ async function profiles() {
     })
   }
 
-  fmap(avatars_requests)(members.namespace('_'));
+  fmap(avatars_requests)(members.namespace('_').names);
   // fmap(infos)(members.namespace('_'));
 }
 
