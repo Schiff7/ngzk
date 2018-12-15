@@ -3,7 +3,7 @@ class Members {
   constructor() {
     this.sign = ' ';
     this.names = [
-      'manatsu akimoto', 'erika ikuta', 'karin itou', 'jyunna itou', 'riria itou',
+      'manatsu akimoto', 'erika ikuta', 'karin itou', 'junna itou', 'riria itou',
       'sayuri inoue', 'renka iwamoto', 'minami umezawa', 'misa etou', 'momoko oozono',
       'hina kawago', 'hinako kitano', 'shiori kubo', 'asuka saitou', 'yuuri saitou',
       'tamami sakaguchi', 'reika sakurai', 'kotoko sasaki', 'kaede satou', 'mai shiraishi',

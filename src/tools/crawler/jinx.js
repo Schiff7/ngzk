@@ -225,5 +225,7 @@ const m = new Machine({
 });
 
 
+// m.connect('http://blog.nogizaka46.com/ami.noujo/?d=20130615')
 m.run();
-//m.connect('http://blog.nogizaka46.com/ami.noujo/?d=20130615')
+
+module.exports = m;

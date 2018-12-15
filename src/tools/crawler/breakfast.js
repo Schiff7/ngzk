@@ -1,12 +1,13 @@
 // breakfast.
 const Utils = require('./utils');
 const members = require('./members');
-
+const m = require('./jinx');
 
 function breakfast() {
   const date = Utils.format(new Date(), 'yyyyMMdd');
-  const urls = members.namespace('.').map(name => `http://blog.nogizaka46.com/${name}/?d=${date}`);
-  console.log(urls);
+  const requests = members.namespace('.')
+    .map(name => () => m.connect(`http://blog.nogizaka46.com/${name}/?d=${date}`));
+  Utils.all(requests);
 }
 
 breakfast();
