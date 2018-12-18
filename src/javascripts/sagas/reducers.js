@@ -11,17 +11,17 @@ const prof = handleActions(
     ],
     [
       impureActions.fetch.prof.succeeded,
-      (state, action) => ({ ...state, status: 'succeeded', info: action.payload.prof })
+      (state, action) => ({ ...state, status: 'succeeded', data: action.payload.prof })
     ],
     [
       impureActions.fetch.prof.failed,
-      (state, action) => ({ ...state, status: 'failed', info: null, error: action.payload.error })
+      (state, action) => ({ ...state, status: 'failed', data: null, error: action.payload.error })
     ]
   ]),
   { 
     status: 'initialized', 
     name: '', 
-    info: { 
+    data: { 
       name: '', 
       hiragana: '',
       birthdate: '',
@@ -42,19 +42,17 @@ const contents = handleActions(
     ],
     [
       impureActions.fetch.contents.succeeded,
-      (state, action) => ({ ...state, status: 'succeeded', info: action.payload.contents })
+      (state, action) => ({ ...state, status: 'succeeded', data: action.payload.contents })
     ],
     [
       impureActions.fetch.contents.failed,
-      (state, action) => ({ ...state, status: 'failed', info: null, error: action.payload.error })
+      (state, action) => ({ ...state, status: 'failed', data: null, error: action.payload.error })
     ]
   ]),
   { 
     status: 'initialized', 
     name: '', 
-    info: {
-      raw: null,
-    }, 
+    data: null,
     error: null 
   }
 );
@@ -67,17 +65,17 @@ const article = handleActions(
     ],
     [
       impureActions.fetch.article.succeeded,
-      (state, action) => ({ ...state, status: 'succeeded', info: action.payload.article })
+      (state, action) => ({ ...state, status: 'succeeded', data: action.payload.article })
     ],
     [
       impureActions.fetch.article.failed,
-      (state, action) => ({ ...state, status: 'failed', info: null, error: action.payload.error })
+      (state, action) => ({ ...state, status: 'failed', data: null, error: action.payload.error })
     ]
   ]),
   { 
     status: 'initialized', 
     location: '', 
-    info: { 
+    data: { 
       url: '', 
       title: '',
       date: '',

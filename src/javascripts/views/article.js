@@ -18,7 +18,7 @@ class Article extends Component {
     const { loadArticle, match: { params: { name, y, m, d } }, article: { status } } = nextProps;
     if (!isEqual(this.props.match, nextProps.match)) {
       setTimeout(() => loadArticle(`${name}/${y}/${m}/${d}`), 300);
-      NProgress.set(0.6);
+      NProgress.set(Math.random());
     }
     if (status === 'succeeded') setTimeout(() => NProgress.done(), 500);
   }

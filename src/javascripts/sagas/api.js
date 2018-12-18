@@ -16,8 +16,7 @@ const fetchProf = async (name) => {
 const fetchContents = async (name) => {
   try {
     const contents = await axios.get(`${HOSTNAME}/views/contents/${name}.yml`);
-    const raw = yaml.safeLoad(contents.data);
-    return { raw };
+    return yaml.safeLoad(contents.data);
   } catch (error) {
     console.error(error);
   }
@@ -26,9 +25,9 @@ const fetchContents = async (name) => {
 const fetchArticle = async (location) => {
   try {
     const article = await axios.get(`${HOSTNAME}/views/blog/${location}.yml`);
-    const raw = yaml.safeLoad(article.data);
+    const data = yaml.safeLoad(article.data);
     const div = document.createElement('div');
-    div.innerHTML = raw.content;
+    div.innerHTML = data.content;
     [...div.querySelectorAll('img')].map(i => {
       i.src = `${HOSTNAME}${i['getAttribute']('src')}`;
       i.onerror = function() {
@@ -37,8 +36,8 @@ const fetchArticle = async (location) => {
         img.onerror = null;
       }
     });
-    raw.content = div.innerHTML;
-    return raw;
+    data.content = div.innerHTML;
+    return data;
   } catch (error) {
     console.error(error);
   }
