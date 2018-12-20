@@ -7,28 +7,17 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      size: props.size || 5,
       hint: [],
-      history: [],
-      inputValue:  props.defaultValue || '',
       visible: 'hide',
       currentIndex: 0
     };
   }
 
-  onChange(event) {
+  showHint(event) {
     this.setState({ 
       inputValue: event.target.value, 
       visible: 'show-block', 
-      hint: utils.match(event.target.value, this.state.size)
-    });
-  }
-
-  onFocus(event) {
-    this.setState({ 
-      inputValue: event.target.value, 
-      visible: 'show-block', 
-      hint: utils.match(event.target.value, this.state.size)
+      hint: utils.match(event.target.value, this.props.size)
     });
   }
 
@@ -39,8 +28,8 @@ class Search extends Component {
   }
 
   onKeyDown(event) {
-    const { currentIndex, size } = this.state;
-    const { history } = this.props;
+    const { currentIndex } = this.state;
+    const { history, size } = this.props;
     switch (event.keyCode) { 
       case 38:
         this.setState({ currentIndex: currentIndex === 0 ? size - 1 : currentIndex - 1 });
@@ -69,8 +58,8 @@ class Search extends Component {
         <input 
           type={'text'} 
           placeholder={ ' INPUT A NAME...' | this.props.placeholder } 
-          onChange={this.onChange} 
-          onFocus={this.onFocus}
+          onChange={this.showHint} 
+          onFocus={this.showHint}
           onBlur={this.onBlur}
           onKeyDown={this.onKeyDown}
           value={this.state.inputValue} 
@@ -95,54 +84,5 @@ class Search extends Component {
 }
 
 
-export const Searc = connect(mapStateToProps, mapDispatchToProps)((props) => {
-  const { history, hint, handleInput, moveUpCurrent, moveDownCurrent, setCurrent } = props;
-  const item = hint.list.length === 0 ? { name: '', roma: '' } : hint['list'][hint.current]['info'];
-  const _handleInput = (e) => handleInput(e.target.value);
-  const _handlekeyDown = (e) =>{ 
-    switch (e.keyCode) { 
-      case 38:
-        moveUpCurrent(); break;
-      case 40:
-        moveDownCurrent(); break;
-      case 13:
-      setCurrent(0);
-        handleInput(item.name);
-        handleInput();
-        history.push({ pathname: `/blog/${item.roma.replace(/\s/, '_')}` }); 
-        break;
-      default:
-        break;
-    }
-  }
-  return (
-    <div className='search'>
-      <input 
-        type='text' 
-        placeholder=' INPUT A NAME...' 
-        onChange={_handleInput} 
-        onFocus={_handleInput}
-        onBlur={() => setTimeout(handleInput, 150)}
-        onKeyDown={hint.visible ? _handlekeyDown : () => {}}
-        value={hint.value} 
-      />
-      <div className='under-line'></div>
-      <div className={`data-list ${hint.visible}`}>
-        <ul>
-          {hint.list.map(({ info }, index) => 
-            <li className={index === hint.current ? 'active' : '_'} key={index}>
-              <Link 
-                onClick={() => handleInput(info.name)}
-                onMouseEnter={() => setCurrent(index)}
-                to={`/blog/${info.roma.replace(/\s/, '_')}`}
-                children={`${info.name} (${info.roma})`}
-              />
-            </li>
-          )}
-        </ul>
-      </div>
-    </div>
-  );
-})
 
 export default withRouter(Search);
