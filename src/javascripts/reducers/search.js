@@ -1,4 +1,4 @@
-// /src/javascript/reducer/search.js
+// src/javascript/reducer/search.js
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import actions from 'actions';
@@ -14,7 +14,7 @@ const value = handleActions(
 const history = handleActions(
   new Map([
     [
-      actions.search.cache.push,
+      actions.search.history.push,
       (state, action) => {
         const { items, size } = state;
         const dereplication = items.filter(item => item.name !== action.payload.name );

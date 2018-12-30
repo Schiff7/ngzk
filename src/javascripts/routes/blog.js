@@ -1,10 +1,7 @@
 /* /public/src/javascripts/container/blog.js */
 import React, { Fragment } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Profile from 'components/profile';
-import Files from 'components/files';
-import Article from 'components/article';
-import Nav from 'components/nav';
+import { Profile, Files, Article, Nav } from 'containers';
 
 export default () => <Route path='/blog' render={() => (
   <div className='container'>

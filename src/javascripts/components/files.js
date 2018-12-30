@@ -1,6 +1,5 @@
+// src/javascripts/components/files.js
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { impureActions } from 'sagas/actions';
 import { Link } from 'react-router-dom';
 import { map, isEqual } from 'lodash';
 
@@ -83,12 +82,4 @@ class Tree extends Component {
 }
 
 
-const mapStateToProps = ({ impure: { contents } }) => ({
-  contents
-})
-
-const mapDispatchToProps = dispatch => ({
-  loadContents: (name) => dispatch(impureActions.fetch.contents.requested(name)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Files);
+export default Files;

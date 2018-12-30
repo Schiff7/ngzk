@@ -4,7 +4,7 @@ export const SEARCH = {
   VALUE: {
     SET: undefined
   },
-  CACHE: {
+  HISTORY: {
     INIT: undefined,
     PUSH: undefined,
     CLEAR: undefined

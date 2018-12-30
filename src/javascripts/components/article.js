@@ -1,6 +1,5 @@
+// src/javascripts/components/article.js
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { impureActions } from 'sagas/actions';
 import { isEqual } from 'lodash';
 
 class Article extends Component {
@@ -49,12 +48,4 @@ class Article extends Component {
   }
 }
 
-const mapStateToProps = ({ impure: { article } }) => ({
-  article
-})
-
-const mapDispatchToProps = dispatch => ({
-  loadArticle: (name) => dispatch(impureActions.fetch.article.requested(name)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Article);
+export default Article;

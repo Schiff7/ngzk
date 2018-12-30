@@ -1,6 +1,7 @@
+// src/javascripts/components/nav.js
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Search } from './home';
+import { Search } from './search';
 
 class Nav extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class Nav extends Component {
   render() {
     return (
       <nav className='nav'>
-        <Search history={this.props.history} />
+        <Search />
         <div className='menu'>
           <NavLink to='/'>home</NavLink>
           <span>•</span>

@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { impureActions } from 'sagas/actions';
 import { isEqual } from 'lodash';
 
 class Profile extends Component {
@@ -49,12 +47,5 @@ class Profile extends Component {
     );
   }
 }
-const mapStateToProps = ({ impure: { prof } }) => ({
-  prof
-})
 
-const mapDispatchToProps = dispatch => ({
-  loadProf: (name) => dispatch(impureActions.fetch.prof.requested(name)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default Profile;

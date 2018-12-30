@@ -1,6 +1,5 @@
+// src/javascripts/components/search.js
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 import utils from 'utils';
 
 class Search extends Component {
@@ -13,22 +12,23 @@ class Search extends Component {
     };
   }
 
-  showHint(event) {
+  showHint = (event) => {
+    const { set } = this.props;
+    set(event.target.value);
     this.setState({ 
-      inputValue: event.target.value, 
       visible: 'show-block', 
-      hint: utils.match(event.target.value, this.props.size)
+      hint: utils.matches(event.target.value, this.props.size)
     });
   }
 
-  onBlur() {
+  onBlur = () => {
     setTimeout(() => {
       this.setState({ visible: 'hide' });
     }, 350);
   }
 
-  onKeyDown(event) {
-    const { currentIndex } = this.state;
+  onKeyDown = (event) => {
+    const { hint, currentIndex } = this.state;
     const { history, size } = this.props;
     switch (event.keyCode) { 
       case 38:
@@ -47,30 +47,32 @@ class Search extends Component {
 
   onClick = (pathname) => () => {
     const { history } = this.props;
-    history.push(pathname);
+    history.push(pathname); 
   }
 
-  onMouseEnter() {}
+  onMouseEnter = (index) => {
+    this.setState({ currentIndex: index });
+  }
 
   render() {
     return (
       <div className='search'>
         <input 
           type={'text'} 
-          placeholder={ ' INPUT A NAME...' | this.props.placeholder } 
+          placeholder={ ' INPUT A NAME...' || this.props.placeholder } 
           onChange={this.showHint} 
           onFocus={this.showHint}
           onBlur={this.onBlur}
           onKeyDown={this.onKeyDown}
-          value={this.state.inputValue} 
+          value={this.props.search.value} 
         />
         <div className='under-line'></div>
         <div className={`data-list ${this.state.visible}`}>
           <ul>
-            {hint.map(({ info }, index) => 
-              <li className={index === hint.current ? 'active' : '_'} key={index}>
+            {this.state.hint.map(({ info }, index) => 
+              <li className={index === this.state.currentIndex ? 'active' : '_'} key={index}>
                 <a 
-                  onClick={this.onClick(`/blog/${hint[currentIndex]['roma'].replace(/\s/, '_')}`)} 
+                  onClick={this.onClick(`/blog/${this.state.hint[this.state.currentIndex]['roma'].replace(/\s/, '_')}`)} 
                   onMouseEnter={this.onMouseEnter}
                   children={`${info.name} (${info.roma})`}
                 />
@@ -83,6 +85,4 @@ class Search extends Component {
   }
 }
 
-
-
-export default withRouter(Search);
+export default Search;

@@ -1,7 +1,7 @@
 /* /src/javascript/utils/names.js */
 
 // names applied in the following function.
-const names = [
+const members = [
   { name: '秋元 真夏', hiragana : 'あきもと まなつ', roma: 'manatsu akimoto', nickname: [] },
   { name: '生田 絵梨花', hiragana : 'いくた えりか', roma: 'erika ikuta', nickname: [] },
   { name: '伊藤 かりん', hiragana : 'いとう かりん', roma: 'karin itou', nickname: [] },
@@ -49,47 +49,34 @@ const names = [
  * any successful match of property will result in a push action to the result array.
  * according to the times of successful matches to the properties of a full name information object,
  * the result will have a priority on which we based to sort the final result.
- * @param names applied
- * @param string input string
+ * @param keyword specified keyword.
+ * @param size length of result list.
  */
-const matches = ((names) => (string, size) => {
-  if (string === '')
-    return [];
+function matches(keyword, size) {
+  if (!keyword) return [];
   const result = [];
-  names.forEach((item) => {
-    let priority = 0;
-    for (let key of Object.keys(item)) {
-      const value = item[key];
-      const regex = new RegExp(string);
+  const pattern = new Regex(keyword);
+  for (const member of members) {
+    let p = 0;
+    for (const key of Object.keys(member)) {
+      const value = member[key];
       if (typeof value === 'string') {
-        priority += regex.test(value) ? 1 : 0;
+        // =, = int m + true = ++m
+        // int m + false = m
+        p += pattern.test(value);
       } else {
-        if (value.length !== 0) {
-          priority = value.reduce((_acc, _item) => {
-            return _acc += regex.test(_item) ? 1 : 0;
-          }, priority)
-        }
+        p = value.reduce((acc, nick) => acc += pattern.test(nick), p);
       }
     }
-    if (!!priority) {
-      result.push({info: item, priority: priority});
-    }
-  });
-
-  const push = (arr, ...item) => {
-    arr.push(...item);
-    return arr;
+    if (!!p) result.push({ p, member });
   }
-  // quick sort
-  const qs = (arr) => {
-    if (arr.length === 0) return arr;
-    const h =  arr.pop();
-    const smaller = qs(arr.filter(x => x.priority > h.priority));
-    const bigger = qs(arr.filter(x => x.priority <= h.priority));
-    return push(smaller,h, ...bigger);
-  }
-  return size === 0 ? qs(result) : qs(result).slice(0, size);
-})(names);
+  result = (function qs(arr) {
+    return !!arr.length
+      ? (_h_ = arr.pop(), [ ...qs(arr.filter(e => e.p > _h_.p)), h, ...qs(arr.filter(e.p <= _h_.p)) ])
+      : arr;
+  })(result);
+  return !size ? result : result.slice(0, size);
+}
 
 export default matches;
 

@@ -14,6 +14,7 @@ module.exports = {
       'reducers': `${__dirname}/src/javascripts/reducers/`,
       'components': `${__dirname}/src/javascripts/components/`,
       'containers': `${__dirname}/src/javascripts/containers/`,
+      'routes': `${__dirname}/src/javascripts/routes/`,
       'sagas': `${__dirname}/src/javascripts/sagas`,
       'utils': `${__dirname}/src/javascripts/utils/`,
     }
