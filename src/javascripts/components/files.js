@@ -23,7 +23,7 @@ class Files extends Component {
   }
 
   render() {
-    const { match: { params: { name } }, contents: { info: { raw } } } = this.props;
+    const { match: { params: { name } }, contents: { data } } = this.props;
     return (
       <div className='files'>
         <div className='header'>
@@ -31,7 +31,7 @@ class Files extends Component {
         </div>
         <div className='body'>
           <div className='tree'>
-            <Tree data={raw} title={'---'} visible={true} location={`/blog/${name}`} />
+            <Tree data={data} title={'---'} visible={true} location={`/blog/${name}`} />
           </div>
         </div>
       </div>
@@ -54,7 +54,6 @@ class Tree extends Component {
   render() {
     const { data, title, location } = this.props;
     const { visible } = this.state;
-    const slice = (str, end) => str['slice'](0, end);
     return (
       <Fragment>
         <div onClick={this.toggle}>
@@ -66,7 +65,7 @@ class Tree extends Component {
             typeof v === 'string' 
             ? (
               <li key={k}>
-                <Link to={`${location}/${slice(k, 4)}`}>{`* ${k}: ${slice(v, 10)}...`}</Link>
+                <Link to={`${location}/${k['slice'](0, 4)}`}>{`* ${k}: ${v['slice'](0, 10)}...`}</Link>
               </li>
             )
             : (

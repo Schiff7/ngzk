@@ -36,7 +36,7 @@ class Article extends Component {
   }
 
   render() {
-    const { article: { info: { title, content } } } = this.props;
+    const { article: { data: { title, content } } } = this.props;
     return (
       <div className='article'>
         <div>

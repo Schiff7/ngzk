@@ -1,5 +1,6 @@
 // src/javascripts/containers/search.js
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import Search from 'components/search';
 import actions from 'actions';
 
@@ -14,4 +15,4 @@ const mapDispatchToProps = dispatch => ({
   clear: () => dispatch(actions.search.history.clear())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Search));

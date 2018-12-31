@@ -54,8 +54,8 @@ const members = [
  */
 function matches(keyword, size) {
   if (!keyword) return [];
-  const result = [];
-  const pattern = new Regex(keyword);
+  let result = [];
+  const pattern = new RegExp(keyword);
   for (const member of members) {
     let p = 0;
     for (const key of Object.keys(member)) {
@@ -71,8 +71,9 @@ function matches(keyword, size) {
     if (!!p) result.push({ p, member });
   }
   result = (function qs(arr) {
+    const _h_ = arr.pop();
     return !!arr.length
-      ? (_h_ = arr.pop(), [ ...qs(arr.filter(e => e.p > _h_.p)), h, ...qs(arr.filter(e.p <= _h_.p)) ])
+      ? [ ...qs(arr.filter(e => e.p > _h_.p)), _h_, ...qs(arr.filter(e => e.p <= _h_.p)) ]
       : arr;
   })(result);
   return !size ? result : result.slice(0, size);

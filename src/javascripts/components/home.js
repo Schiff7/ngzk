@@ -51,7 +51,7 @@ class Home extends Component {
               </section>
               <section>
                 <div className='search-wrapper'>
-                  <Search />
+                  <Search size={5} />
                 </div>
               </section>
               <section>

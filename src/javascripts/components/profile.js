@@ -21,7 +21,7 @@ class Profile extends Component {
   }
 
   render() {
-    const { prof: { info : { name, birthdate, constellation, abo, stature } } } = this.props;
+    const { prof: { data : { name, birthdate, constellation, abo, stature } } } = this.props;
     return (
       <div className='profile'>
         <div className='header'>
