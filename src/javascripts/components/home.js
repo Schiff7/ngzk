@@ -25,7 +25,7 @@ class Home extends Component {
     const { size, innerHeight, offset } = this.state;
     const fullHeight = size * innerHeight;
     if (event.deltaY > 0) {
-      this.setState({ offset: offset - innerHeight < - fullHeight ? fullHeight : offset - innerHeight });
+      this.setState({ offset: offset - innerHeight < - fullHeight + innerHeight ? - fullHeight + innerHeight : offset - innerHeight });
     } else {
       this.setState({ offset: offset + innerHeight > 0 ? 0 : offset + innerHeight });
     }
