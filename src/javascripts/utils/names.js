@@ -54,7 +54,7 @@ const members = [
  */
 function matches(keyword, size) {
   if (!keyword) return [];
-  let result = [];
+  const result = [];
   const pattern = new RegExp(keyword);
   for (const member of members) {
     let p = 0;
@@ -70,13 +70,14 @@ function matches(keyword, size) {
     }
     if (!!p) result.push({ p, member });
   }
-  result = (function qs(arr) {
+  const sortedResult = (function qs(arr) {
+    if (!arr.length) return arr; 
     const _h_ = arr.pop();
     return !!arr.length
       ? [ ...qs(arr.filter(e => e.p > _h_.p)), _h_, ...qs(arr.filter(e => e.p <= _h_.p)) ]
-      : arr;
+      : [ _h_ ];
   })(result);
-  return !size ? result : result.slice(0, size);
+  return !size ? sortedResult : sortedResult.slice(0, size);
 }
 
 export default matches;

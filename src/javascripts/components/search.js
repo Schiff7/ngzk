@@ -30,7 +30,7 @@ class Search extends Component {
 
   handleKeyDown = (event) => {
     const { hint, currentIndex } = this.state;
-    const { history, size } = this.props;
+    const { history, size, set } = this.props;
     const _size = !size ? hint.length : size;
     switch (event.keyCode) { 
       case 38:
@@ -40,6 +40,7 @@ class Search extends Component {
         this.setState({ currentIndex: currentIndex === _size - 1 ? 0 : currentIndex + 1 });
         break;
       case 13:
+        set(hint[currentIndex]['member']['name']);
         history.push({ pathname: `/blog/${hint[currentIndex]['member']['roma']['replace'](/\s/, '_')}` });
         break;
       default:
@@ -49,6 +50,11 @@ class Search extends Component {
 
   handleMouseEnter = (index) => () => {
     this.setState({ currentIndex: index });
+  }
+
+  handleClick = (value) => () => {
+    const { set } = this.props;
+    set(value);
   }
 
   render() {
@@ -70,6 +76,7 @@ class Search extends Component {
             {hint.map(({ member }, index) => 
               <li className={index === currentIndex ? 'active' : '_'} key={index}>
                 <Link 
+                  onClick={this.handleClick(member['name'])}
                   to={`/blog/${member['roma']['replace'](/\s/, '_')}`} 
                   onMouseEnter={this.handleMouseEnter(index)}
                   children={`${member.name} (${member.roma})`}
