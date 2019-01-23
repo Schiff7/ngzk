@@ -1,7 +1,6 @@
 // src/javascript/components/home.js
 import React, { Component } from 'react';
 import { Motion, spring } from 'react-motion';
-import Search from 'containers/search';
 
 class Home extends Component {
   constructor(props) {
@@ -37,28 +36,7 @@ class Home extends Component {
         <Motion defaultStyle={{ offset: 0 }} style={{ offset: spring(this.state.offset) }} >
           {({ offset }) => 
             <div className='slider' ref={this.slider} style={{ transform: `translateY(${offset}px)` }}>
-              <section>
-                <div className='pic-wrapper'>
-                  <div className='dream'>
-                    <span className='_ngzk' data-text='Nogizaka'>Nogizaka </span>
-                    <span className='_46' data-text='46'>46</span>
-                  </div>
-                  <div className='pic' />
-                  <div className='bottom' />
-                  <div className='bottom-middle' />
-                  <div className='bottom' />
-                </div>
-              </section>
-              <section>
-                <div className='search-wrapper'>
-                  <Search size={5} />
-                </div>
-              </section>
-              <section>
-                <div className='grid-wrapper'>
-
-                </div>
-              </section>
+              {this.props.children}
             </div>
           }
         </Motion>
